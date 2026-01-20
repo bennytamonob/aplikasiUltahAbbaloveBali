@@ -15,6 +15,9 @@
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     
+    <!-- html2canvas untuk Fitur Download -->
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+    
     <!-- Font -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
 
@@ -29,6 +32,11 @@
 
     <script type="text/babel">
         const { useState, useEffect } = React;
+
+        // --- KONFIGURASI UTAMA (EDIT DI SINI) ---
+        const LINK_CSV_DATABASE = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSG_eqv9cBNjfRixvIAZSok12tzHC6UTHCT1n3zckBTo-HecfQEdMeqdLyMgcd9LzymE02qJcg56asE/pub?gid=0&single=true&output=csv"; 
+        const LINK_LOGO_DEFAULT = "https://i.ibb.co.com/YFNydDhq/logo.png"; 
+        // -----------------------------------------
 
         // --- ICONS (SVG Components) ---
         const Calendar = ({ className }) => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/></svg>;
@@ -67,7 +75,7 @@
         const CardPreview = ({ names, quote, theme = 'modern', logoUrl }) => {
             return (
                 <div className="w-full max-w-md mx-auto transform hover:scale-105 transition-all duration-300">
-                    <div className={`relative overflow-hidden rounded-xl shadow-2xl aspect-[4/5] flex flex-col items-center text-center p-6 border-8 border-white`}>
+                    <div id="card-capture-area" className={`relative overflow-hidden rounded-xl shadow-2xl aspect-[4/5] flex flex-col items-center text-center p-6 border-8 border-white bg-slate-900`}>
                         {/* Background Logic */}
                         <div className="absolute inset-0 z-0">
                             {theme === 'modern' ? (
@@ -89,6 +97,7 @@
                                         <img 
                                             src={logoUrl} 
                                             alt="Logo Gereja" 
+                                            crossOrigin="anonymous" 
                                             className="max-h-full max-w-full object-contain filter drop-shadow-lg"
                                             onError={(e) => { e.target.style.display = 'none'; e.target.parentElement.innerHTML = '<span class="text-xs text-red-400">Error Loading Image</span>'; }}
                                         />
@@ -105,7 +114,7 @@
                                     Selamat Ulang Tahun
                                 </h2>
                                 
-                                {/* Names */}
+                                {/* Names - Class 'text-transparent' menyebabkan masalah saat download di html2canvas */}
                                 <h1 className={`text-3xl font-bold mb-4 font-serif leading-tight ${theme === 'modern' ? 'text-transparent bg-clip-text bg-gradient-to-r from-yellow-200 to-yellow-500' : 'text-slate-900'}`}>
                                     {names}
                                 </h1>
@@ -129,10 +138,25 @@
 
         const BirthdayApp = () => {
             const [activeTab, setActiveTab] = useState('dashboard');
-            const [sheetUrl, setSheetUrl] = useState('');
-            // Set default logo URL 
-            const [logoUrl, setLogoUrl] = useState('https://ibb.co.com/0RnF9Brd');
-            const [users, setUsers] = useState(MOCK_DATA);
+            
+            // --- STATE INIT ---
+            const [sheetUrl, setSheetUrl] = useState(() => {
+                if (LINK_CSV_DATABASE) return LINK_CSV_DATABASE;
+                const saved = localStorage.getItem('birthday_sheetUrl');
+                return saved || '';
+            });
+
+            const [logoUrl, setLogoUrl] = useState(() => {
+                if (LINK_LOGO_DEFAULT) return LINK_LOGO_DEFAULT;
+                const saved = localStorage.getItem('birthday_logoUrl');
+                return saved || 'https://i.ibb.co.com/YFNydDhq/logo.png';
+            });
+
+            const [users, setUsers] = useState(() => {
+                const savedUsers = localStorage.getItem('birthday_users');
+                return savedUsers ? JSON.parse(savedUsers) : MOCK_DATA;
+            });
+            
             const [loading, setLoading] = useState(false);
             
             // Auth State
@@ -145,16 +169,75 @@
             // State for the single combined card
             const [combinedCard, setCombinedCard] = useState(null);
 
-            // Check birthdays on load
+            // --- HELPERS ---
+            // Helper untuk format tanggal Indonesia
+            const getIndoDate = () => {
+                const d = new Date();
+                return d.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
+            };
+
+            // Helper untuk Download Kartu
+            const handleDownload = async () => {
+                const element = document.getElementById('card-capture-area');
+                if (!element) return;
+                
+                // Beri notifikasi loading sederhana
+                const btn = document.getElementById('download-btn');
+                const originalText = btn ? btn.innerHTML : '';
+                if(btn) btn.innerHTML = 'Memproses...';
+
+                try {
+                    // Tunggu sebentar agar gambar terload sempurna jika baru render
+                    await new Promise(resolve => setTimeout(resolve, 500));
+
+                    const canvas = await html2canvas(element, { 
+                        scale: 2, // Resolusi tinggi
+                        backgroundColor: null,
+                        logging: false,
+                        useCORS: true, // Penting untuk gambar eksternal (logo)
+                        onclone: (documentClone) => {
+                            // FIX: html2canvas tidak support text-transparent + bg-clip-text dengan baik
+                            // Solusi: Saat di-clone untuk download, ubah jadi warna solid
+                            const textElements = documentClone.querySelectorAll('.text-transparent');
+                            textElements.forEach(el => {
+                                el.classList.remove('text-transparent', 'bg-clip-text', 'bg-gradient-to-r');
+                                el.style.color = '#FCD34D'; // Warna Emas Solid
+                            });
+                        }
+                    });
+                    
+                    const link = document.createElement('a');
+                    link.download = `Kartu-Ucapan-Abbalove-${new Date().getTime()}.png`;
+                    link.href = canvas.toDataURL('image/png');
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                } catch (err) {
+                    alert("Gagal mendownload kartu: " + err.message);
+                    console.error(err);
+                } finally {
+                    if(btn) btn.innerHTML = originalText;
+                }
+            };
+
+            // --- EFFECTS ---
             useEffect(() => {
-                checkBirthdays();
+                localStorage.setItem('birthday_sheetUrl', sheetUrl);
+            }, [sheetUrl]);
+
+            useEffect(() => {
+                localStorage.setItem('birthday_logoUrl', logoUrl);
+            }, [logoUrl]);
+
+            useEffect(() => {
+                localStorage.setItem('birthday_users', JSON.stringify(users));
             }, [users]);
 
-            const checkBirthdays = () => {
+            const checkBirthdays = (currentUsers) => {
+                const dataToCheck = currentUsers || users;
                 const today = new Date();
                 
-                // Logic: Cari semua user yang ultah hari ini
-                const found = users.filter(user => {
+                const found = dataToCheck.filter(user => {
                     if(!user.tgl_lahir) return false;
                     const parts = user.tgl_lahir.split('/');
                     if (parts.length < 2) return false;
@@ -165,18 +248,17 @@
                     return month === (today.getMonth() + 1) && day === today.getDate();
                 });
 
-                // Jika kosong, gunakan data demo agar preview tidak kosong saat development
                 let birthdayPeople = found;
                 let isDemo = false;
                 
-                if (found.length === 0 && users.length > 0) {
-                    // Ambil 2 user pertama untuk demo penggabungan
-                    birthdayPeople = users.slice(0, 2); 
+                const isUsingMock = JSON.stringify(dataToCheck) === JSON.stringify(MOCK_DATA);
+
+                if (found.length === 0 && isUsingMock && dataToCheck.length > 0) {
+                    birthdayPeople = dataToCheck.slice(0, 2); 
                     isDemo = true;
                 }
 
                 if (birthdayPeople.length > 0) {
-                    // Gabung nama
                     const namesArray = birthdayPeople.map(u => u.nama);
                     let combinedNames = "";
                     
@@ -185,7 +267,6 @@
                     } else if (namesArray.length === 2) {
                         combinedNames = namesArray.join(" & ");
                     } else {
-                        // A, B, & C
                         const last = namesArray.pop();
                         combinedNames = namesArray.join(", ") + " & " + last;
                     }
@@ -201,14 +282,17 @@
                 }
             };
 
-            const fetchFromGoogleSheet = async () => {
-                if (!sheetUrl) {
-                    alert("Masukkan URL CSV Google Sheet terlebih dahulu!");
+            const fetchFromGoogleSheet = async (urlToFetch) => {
+                const targetUrl = urlToFetch || sheetUrl;
+                if (!targetUrl) {
+                    console.log("Link CSV kosong.");
                     return;
                 }
                 setLoading(true);
                 try {
-                    const response = await fetch(sheetUrl);
+                    const response = await fetch(targetUrl);
+                    if (!response.ok) throw new Error("Network response was not ok");
+                    
                     const text = await response.text();
                     const rows = text.split('\n').slice(1);
                     const parsedData = rows.map(row => {
@@ -223,15 +307,29 @@
                         return null;
                     }).filter(Boolean);
 
+                    if (parsedData.length === 0) {
+                        throw new Error("Data CSV kosong atau format salah.");
+                    }
+
                     setUsers(parsedData);
-                    alert(`Berhasil memuat ${parsedData.length} data dari Spreadsheet!`);
+                    checkBirthdays(parsedData); 
+                    console.log(`Berhasil memuat ${parsedData.length} data.`);
                 } catch (error) {
-                    alert("Gagal mengambil data. Pastikan Link CSV benar.");
-                    console.error(error);
+                    console.error("Gagal mengambil data:", error);
                 } finally {
                     setLoading(false);
                 }
             };
+
+            useEffect(() => {
+                if (sheetUrl) {
+                    fetchFromGoogleSheet(sheetUrl);
+                }
+            }, []);
+
+            useEffect(() => {
+                checkBirthdays();
+            }, [users]);
 
             const sendEmailManual = (email, subject, body) => {
                 window.open(`mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`);
@@ -432,14 +530,22 @@
                                                         <div key={idx} className="py-3 flex justify-between items-center">
                                                             <div>
                                                                 <p className="font-medium text-slate-900">{person.nama}</p>
-                                                                <p className="text-xs text-slate-500">{person.email}</p>
+                                                                <div className="flex gap-2 items-center">
+                                                                    <p className="text-xs text-slate-500">{person.email}</p>
+                                                                    <span className="text-slate-300">|</span>
+                                                                    <p className="text-xs text-indigo-600 font-medium">{getIndoDate()}</p>
+                                                                </div>
                                                             </div>
-                                                            <button 
-                                                                onClick={() => sendEmailManual(person.email, `Selamat Ulang Tahun ${person.nama}`, `${combinedCard.quote}\n\n- Keluarga Besar Abbalove Ministries Bali`)}
-                                                                className="text-xs bg-indigo-50 text-indigo-700 hover:bg-indigo-100 py-1.5 px-3 rounded-md transition-colors"
-                                                            >
-                                                                Kirim Personal
-                                                            </button>
+                                                            
+                                                            {/* HANYA TAMPIL JIKA ADMIN */}
+                                                            {isLoggedIn && (
+                                                                <button 
+                                                                    onClick={() => sendEmailManual(person.email, `Selamat Ulang Tahun ${person.nama}`, `${combinedCard.quote}\n\n- Keluarga Besar Abbalove Ministries Bali`)}
+                                                                    className="text-xs bg-indigo-50 text-indigo-700 hover:bg-indigo-100 py-1.5 px-3 rounded-md transition-colors"
+                                                                >
+                                                                    Kirim Personal
+                                                                </button>
+                                                            )}
                                                         </div>
                                                     ))}
                                                 </div>
@@ -450,7 +556,11 @@
                                                 <p className="text-sm text-slate-300 mb-4">
                                                     Gunakan tombol di bawah ini untuk mengunduh kartu ucapan gabungan ini untuk dibagikan ke Grup WhatsApp Gereja.
                                                 </p>
-                                                <button className="w-full bg-white text-slate-900 hover:bg-slate-100 font-bold py-3 px-4 rounded-lg flex items-center justify-center gap-2 transition-colors">
+                                                <button 
+                                                    id="download-btn"
+                                                    onClick={handleDownload}
+                                                    className="w-full bg-white text-slate-900 hover:bg-slate-100 font-bold py-3 px-4 rounded-lg flex items-center justify-center gap-2 transition-colors"
+                                                >
                                                     <Download className="w-5 h-5" />
                                                     Download Kartu Gabungan
                                                 </button>
@@ -523,8 +633,7 @@
                                                 />
                                             </div>
                                             <p className="text-xs text-slate-500 mt-2 leading-relaxed">
-                                                <strong>Tips:</strong> Jika menggunakan Google Drive, pastikan link gambar bersifat "Public" (Anyone with the link). 
-                                                Aplikasi akan mencoba menampilkan gambar dari link tersebut menggantikan ikon hati standar.
+                                                <strong>Tips:</strong> Anda juga bisa mengganti URL default dengan mengedit file index.html pada bagian LINK_LOGO_DEFAULT.
                                             </p>
                                         </div>
                                         
@@ -557,13 +666,17 @@
                                         </div>
 
                                         <button 
-                                            onClick={fetchFromGoogleSheet}
+                                            onClick={() => fetchFromGoogleSheet(sheetUrl)}
                                             disabled={loading}
                                             className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2.5 rounded-lg flex items-center justify-center gap-2 transition-colors disabled:opacity-50"
                                         >
                                             {loading ? <RefreshCw className="w-4 h-4 animate-spin" /> : <RefreshCw className="w-4 h-4" />}
                                             {loading ? 'Memuat Data...' : 'Sinkronisasi Data Sekarang'}
                                         </button>
+                                        
+                                        <div className="mt-4 p-4 bg-slate-50 text-xs text-slate-500 border border-slate-200 rounded">
+                                            <strong>Catatan:</strong> Jika Anda sudah mengisi <code>LINK_CSV_DATABASE</code> di dalam file index.html, link tersebut akan otomatis muncul di sini saat halaman dimuat ulang.
+                                        </div>
                                     </div>
                                 </div>
                             </div>
