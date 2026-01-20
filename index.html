@@ -34,7 +34,9 @@
         const { useState, useEffect } = React;
 
         // --- KONFIGURASI UTAMA (EDIT DI SINI) ---
-        const LINK_CSV_DATABASE = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSG_eqv9cBNjfRixvIAZSok12tzHC6UTHCT1n3zckBTo-HecfQEdMeqdLyMgcd9LzymE02qJcg56asE/pub?gid=0&single=true&output=csv"; 
+        // Ganti Link ini dengan Link "Web App URL" dari Google Apps Script (/exec)
+        const LINK_API_APPS_SCRIPT = "https://script.google.com/macros/s/AKfycbzzCBGLw3_LcI8_22D3BrMxFhk1LcJQ69slHsmei8IZndp_zUgZcJ6XtVPMpOO2r02s/exec"; 
+        
         const LINK_LOGO_DEFAULT = "https://i.ibb.co.com/YFNydDhq/logo.png"; 
         // -----------------------------------------
 
@@ -140,9 +142,9 @@
             const [activeTab, setActiveTab] = useState('dashboard');
             
             // --- STATE INIT ---
-            const [sheetUrl, setSheetUrl] = useState(() => {
-                if (LINK_CSV_DATABASE) return LINK_CSV_DATABASE;
-                const saved = localStorage.getItem('birthday_sheetUrl');
+            const [apiUrl, setApiUrl] = useState(() => {
+                if (LINK_API_APPS_SCRIPT) return LINK_API_APPS_SCRIPT;
+                const saved = localStorage.getItem('birthday_apiUrl');
                 return saved || '';
             });
 
@@ -222,8 +224,8 @@
 
             // --- EFFECTS ---
             useEffect(() => {
-                localStorage.setItem('birthday_sheetUrl', sheetUrl);
-            }, [sheetUrl]);
+                localStorage.setItem('birthday_apiUrl', apiUrl);
+            }, [apiUrl]);
 
             useEffect(() => {
                 localStorage.setItem('birthday_logoUrl', logoUrl);
@@ -282,48 +284,42 @@
                 }
             };
 
-            const fetchFromGoogleSheet = async (urlToFetch) => {
-                const targetUrl = urlToFetch || sheetUrl;
-                if (!targetUrl) {
-                    console.log("Link CSV kosong.");
+            const fetchFromAppsScript = async (urlToFetch) => {
+                const targetUrl = urlToFetch || apiUrl;
+                // Cek jika link masih default placeholder atau kosong
+                if (!targetUrl || targetUrl.includes("CONTOH_LINK")) {
+                    console.log("Link API Apps Script belum diatur.");
                     return;
                 }
+                
                 setLoading(true);
                 try {
                     const response = await fetch(targetUrl);
                     if (!response.ok) throw new Error("Network response was not ok");
                     
-                    const text = await response.text();
-                    const rows = text.split('\n').slice(1);
-                    const parsedData = rows.map(row => {
-                        const cols = row.split(',');
-                        if (cols.length >= 3) {
-                            return {
-                                nama: cols[0].trim(),
-                                email: cols[1].trim(),
-                                tgl_lahir: cols[2].trim()
-                            };
-                        }
-                        return null;
-                    }).filter(Boolean);
+                    // Apps Script API yang kita buat return JSON Array langsung
+                    const parsedData = await response.json(); 
 
-                    if (parsedData.length === 0) {
-                        throw new Error("Data CSV kosong atau format salah.");
+                    if (!Array.isArray(parsedData) || parsedData.length === 0) {
+                        throw new Error("Data API kosong atau format salah.");
                     }
 
                     setUsers(parsedData);
                     checkBirthdays(parsedData); 
-                    console.log(`Berhasil memuat ${parsedData.length} data.`);
+                    console.log(`Berhasil memuat ${parsedData.length} data dari API.`);
+                    alert(`Sinkronisasi Berhasil! Ditemukan ${parsedData.length} data jemaat.`);
                 } catch (error) {
                     console.error("Gagal mengambil data:", error);
+                    alert("Gagal sinkronisasi data. Cek console browser untuk detail error CORS atau pastikan Deploy Apps Script sudah 'Anyone'.");
                 } finally {
                     setLoading(false);
                 }
             };
 
+            // Auto fetch on load
             useEffect(() => {
-                if (sheetUrl) {
-                    fetchFromGoogleSheet(sheetUrl);
+                if (apiUrl && !apiUrl.includes("CONTOH_LINK")) {
+                    fetchFromAppsScript(apiUrl);
                 }
             }, []);
 
@@ -650,23 +646,23 @@
                                 <div className="bg-white rounded-xl shadow-sm border border-slate-100 p-6">
                                     <h3 className="text-lg font-bold mb-4 flex items-center gap-2">
                                         <Database className="w-5 h-5 text-indigo-600" />
-                                        Koneksi Google Spreadsheet
+                                        Koneksi Google Spreadsheet (API)
                                     </h3>
                                     
                                     <div className="space-y-4">
                                         <div>
-                                            <label className="block text-sm font-medium text-slate-700 mb-1">Link CSV Publik</label>
+                                            <label className="block text-sm font-medium text-slate-700 mb-1">Link API Apps Script (Web App URL)</label>
                                             <input 
                                                 type="text" 
-                                                value={sheetUrl}
-                                                onChange={(e) => setSheetUrl(e.target.value)}
-                                                placeholder="https://docs.google.com/spreadsheets/d/.../export?format=csv"
+                                                value={apiUrl}
+                                                onChange={(e) => setApiUrl(e.target.value)}
+                                                placeholder="https://script.google.com/macros/s/.../exec"
                                                 className="w-full rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-3 border"
                                             />
                                         </div>
 
                                         <button 
-                                            onClick={() => fetchFromGoogleSheet(sheetUrl)}
+                                            onClick={() => fetchFromAppsScript(apiUrl)}
                                             disabled={loading}
                                             className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2.5 rounded-lg flex items-center justify-center gap-2 transition-colors disabled:opacity-50"
                                         >
@@ -675,7 +671,7 @@
                                         </button>
                                         
                                         <div className="mt-4 p-4 bg-slate-50 text-xs text-slate-500 border border-slate-200 rounded">
-                                            <strong>Catatan:</strong> Jika Anda sudah mengisi <code>LINK_CSV_DATABASE</code> di dalam file index.html, link tersebut akan otomatis muncul di sini saat halaman dimuat ulang.
+                                            <strong>Catatan:</strong> Jika Anda sudah mengisi <code>LINK_API_APPS_SCRIPT</code> di dalam file index.html, link tersebut akan otomatis muncul di sini saat halaman dimuat ulang.
                                         </div>
                                     </div>
                                 </div>
