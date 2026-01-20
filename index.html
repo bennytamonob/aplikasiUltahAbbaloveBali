@@ -76,8 +76,8 @@
 
         const CardPreview = ({ names, quote, theme = 'modern', logoUrl }) => {
             return (
-                <div className="w-full max-w-md mx-auto transform hover:scale-105 transition-all duration-300">
-                    <div id="card-capture-area" className={`relative overflow-hidden rounded-xl shadow-2xl aspect-[4/5] flex flex-col items-center text-center p-6 border-8 border-white bg-slate-900`}>
+                <div className="w-full md:max-w-md mx-auto transform hover:scale-105 transition-all duration-300">
+                    <div id="card-capture-area" className={`relative overflow-hidden rounded-xl shadow-2xl aspect-[4/5] flex flex-col items-center text-center p-4 md:p-6 border-4 md:border-8 border-white bg-slate-900`}>
                         {/* Background Logic */}
                         <div className="absolute inset-0 z-0">
                             {theme === 'modern' ? (
@@ -307,7 +307,8 @@
                     setUsers(parsedData);
                     checkBirthdays(parsedData); 
                     console.log(`Berhasil memuat ${parsedData.length} data dari API.`);
-                    alert(`Sinkronisasi Berhasil! Ditemukan ${parsedData.length} data jemaat.`);
+                    // Alert sukses dihapus sesuai permintaan
+                    // alert(`Sinkronisasi Berhasil! Ditemukan ${parsedData.length} data jemaat.`);
                 } catch (error) {
                     console.error("Gagal mengambil data:", error);
                     alert("Gagal sinkronisasi data. Cek console browser untuk detail error CORS atau pastikan Deploy Apps Script sudah 'Anyone'.");
@@ -470,7 +471,7 @@
                     </nav>
 
                     {/* Content */}
-                    <main className="max-w-6xl mx-auto px-4 py-8">
+                    <main className="max-w-6xl mx-auto px-2 md:px-4 py-8">
                         
                         {/* DASHBOARD TAB - Always Visible */}
                         {activeTab === 'dashboard' && (
