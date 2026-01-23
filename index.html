@@ -24,6 +24,15 @@
     <style>
         body { font-family: 'Inter', sans-serif; }
         .font-serif { font-family: 'Playfair Display', serif; }
+        
+        /* Spinner Animation */
+        .spinner {
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
     </style>
 </head>
 <body class="bg-slate-50 text-slate-800">
@@ -31,11 +40,11 @@
     <div id="root"></div>
 
     <script type="text/babel">
-        const { useState, useEffect } = React;
+        const { useState, useEffect, useMemo } = React;
 
         // --- KONFIGURASI UTAMA (EDIT DI SINI) ---
         // Ganti Link ini dengan Link "Web App URL" dari Google Apps Script (/exec)
-        const LINK_API_APPS_SCRIPT = "https://script.google.com/macros/s/AKfycbzzCBGLw3_LcI8_22D3BrMxFhk1LcJQ69slHsmei8IZndp_zUgZcJ6XtVPMpOO2r02s/exec"; 
+        const LINK_API_APPS_SCRIPT = "https://script.google.com/macros/s/AKfycbwtg_T-RVvn0tNMpCxYtUnSBvnBqlEqnzu6Ytxj0bO34pj20OXx9xElupvKRfgBVuz_/exec"; 
         
         const LINK_LOGO_DEFAULT = "https://i.ibb.co.com/YFNydDhq/logo.png"; 
         // -----------------------------------------
@@ -53,6 +62,13 @@
         const LogOut = ({ className }) => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="9" y1="12" y2="12"/></svg>;
         const X = ({ className }) => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M18 6 6 18"/><path d="m6 6 18 18"/></svg>;
         const ExternalLink = ({ className }) => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" x2="21" y1="14" y2="3"/></svg>;
+        
+        // --- NEW ICONS FOR CRUD ---
+        const Plus = ({ className }) => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M5 12h14"/><path d="M12 5v14"/></svg>;
+        const Edit = ({ className }) => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></svg>;
+        const Trash2 = ({ className }) => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/></svg>;
+        const Filter = ({ className }) => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>;
+        const Save = ({ className }) => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>;
 
         // --- DATA & QUOTES ---
         const CHRISTIAN_QUOTES = [
@@ -70,6 +86,22 @@
             { nama: "Budi Santoso", email: "budi@example.com", tgl_lahir: "20/01/1990" }, 
             { nama: "Siti Lestari", email: "siti@example.com", tgl_lahir: "20/01/1995" }, 
             { nama: "Maria Grace", email: "maria@example.com", tgl_lahir: "25/12/1992" },
+        ];
+
+        const MONTHS = [
+            { value: 'all', label: 'Semua Bulan' },
+            { value: '1', label: 'Januari' },
+            { value: '2', label: 'Februari' },
+            { value: '3', label: 'Maret' },
+            { value: '4', label: 'April' },
+            { value: '5', label: 'Mei' },
+            { value: '6', label: 'Juni' },
+            { value: '7', label: 'Juli' },
+            { value: '8', label: 'Agustus' },
+            { value: '9', label: 'September' },
+            { value: '10', label: 'Oktober' },
+            { value: '11', label: 'November' },
+            { value: '12', label: 'Desember' }
         ];
 
         // --- COMPONENTS ---
@@ -93,7 +125,7 @@
                         {/* Content */}
                         <div className={`relative z-10 flex flex-col h-full w-full justify-between ${theme === 'modern' ? 'text-white' : 'text-slate-800'}`}>
                             
-                            {/* Header Section - Prevent Shrinking (Agar Header tidak gepeng) */}
+                            {/* Header Section */}
                             <div className="flex-shrink-0 flex flex-col items-center justify-center">
                                 {/* Logo Section */}
                                 <div className="mb-2 md:mb-4 h-12 w-12 md:h-16 md:w-16 flex items-center justify-center">
@@ -119,7 +151,7 @@
                                 </h2>
                             </div>
                             
-                            {/* Middle Section - Flexible (Isi nama & ayat menyesuaikan ruang sisa) */}
+                            {/* Middle Section */}
                             <div className="flex-grow flex flex-col items-center justify-center overflow-hidden min-h-0">
                                 {/* Names */}
                                 <h1 className={`text-2xl md:text-4xl font-bold mb-2 font-serif leading-tight px-1 ${theme === 'modern' ? 'text-transparent bg-clip-text bg-gradient-to-r from-yellow-200 to-yellow-500' : 'text-slate-900'}`}>
@@ -134,7 +166,7 @@
                                 </div>
                             </div>
 
-                            {/* Footer Section - Prevent Shrinking - TULISAN INI TETAP ADA */}
+                            {/* Footer Section */}
                             <div className="flex-shrink-0 mt-auto pt-2">
                                 <div className={`h-px w-16 md:w-24 mx-auto mb-2 ${theme === 'modern' ? 'bg-yellow-500/50' : 'bg-slate-300'}`}></div>
                                 <p className="text-[8px] md:text-[10px] uppercase tracking-widest opacity-60">Tuhan Yesus Memberkati</p>
@@ -167,6 +199,7 @@
             });
             
             const [loading, setLoading] = useState(false);
+            const [isSaving, setSaving] = useState(false); // State untuk proses penyimpanan
             
             // Auth State
             const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -175,42 +208,200 @@
             const [password, setPassword] = useState('');
             const [loginError, setLoginError] = useState('');
 
+            // Filter & CRUD State
+            const [filterMonth, setFilterMonth] = useState('all');
+            const [showUserModal, setShowUserModal] = useState(false);
+            const [isEditing, setIsEditing] = useState(false);
+            const [editingEmail, setEditingEmail] = useState(''); // Untuk melacak email asli saat edit
+            const [currentUserIndex, setCurrentUserIndex] = useState(null);
+            const [formData, setFormData] = useState({ nama: '', email: '', tgl_lahir: '' });
+
             // State for the single combined card
             const [combinedCard, setCombinedCard] = useState(null);
 
             // --- HELPERS ---
-            // Helper untuk format tanggal Indonesia
             const getIndoDate = () => {
                 const d = new Date();
                 return d.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
             };
 
-            // Helper untuk Download Kartu
+            const ddmmyyyyToDateInput = (dateStr) => {
+                if(!dateStr) return "";
+                const [d, m, y] = dateStr.split('/');
+                return `${y}-${m.padStart(2, '0')}-${d.padStart(2, '0')}`;
+            };
+
+            const dateInputToDdmmyyyy = (dateInput) => {
+                if(!dateInput) return "";
+                const [y, m, d] = dateInput.split('-');
+                return `${d}/${m}/${y}`;
+            };
+
+            // --- FILTER LOGIC ---
+            const filteredUsers = useMemo(() => {
+                if (filterMonth === 'all') return users;
+                return users.filter(user => {
+                    if (!user.tgl_lahir) return false;
+                    const parts = user.tgl_lahir.split('/');
+                    if (parts.length < 2) return false;
+                    return parseInt(parts[1], 10) === parseInt(filterMonth, 10);
+                });
+            }, [users, filterMonth]);
+
+            // --- API SYNC LOGIC ---
+            const syncToAppsScript = async (payload) => {
+                // Cek apakah URL valid
+                if (!apiUrl || apiUrl.includes("CONTOH_LINK")) {
+                    console.warn("Link API belum diatur. Data hanya disimpan lokal.");
+                    return { status: 'local_only', message: 'API belum diset' };
+                }
+
+                // Kirim request ke Google Apps Script
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    body: JSON.stringify(payload)
+                });
+                
+                // Cek respon
+                const result = await response.json();
+                return result;
+            };
+
+            // --- CRUD HANDLERS ---
+            const handleAddClick = () => {
+                setFormData({ nama: '', email: '', tgl_lahir: '' });
+                setIsEditing(false);
+                setEditingEmail('');
+                setShowUserModal(true);
+            };
+
+            const handleEditClick = (user) => {
+                const realIndex = users.findIndex(u => u === user);
+                if (realIndex === -1) return;
+
+                setFormData({
+                    nama: user.nama,
+                    email: user.email,
+                    tgl_lahir: ddmmyyyyToDateInput(user.tgl_lahir)
+                });
+                setEditingEmail(user.email); // Simpan email lama untuk kunci pencarian di sheet
+                setCurrentUserIndex(realIndex);
+                setIsEditing(true);
+                setShowUserModal(true);
+            };
+
+            const handleDeleteClick = async (user) => {
+                if (!confirm(`Yakin ingin menghapus data "${user.nama}" dari database?`)) return;
+
+                setSaving(true);
+                try {
+                    // 1. Hapus dari Apps Script
+                    if (apiUrl && !apiUrl.includes("CONTOH_LINK")) {
+                        await syncToAppsScript({ 
+                            action: 'delete', 
+                            email: user.email 
+                        });
+                    }
+
+                    // 2. Hapus dari State Lokal
+                    const newUsers = users.filter(u => u !== user);
+                    setUsers(newUsers);
+                    alert("Data berhasil dihapus.");
+                } catch (err) {
+                    console.error(err);
+                    alert("Gagal menghapus data di server: " + err.message);
+                } finally {
+                    setSaving(false);
+                }
+            };
+
+            const handleSaveUser = async (e) => {
+                e.preventDefault();
+                setSaving(true);
+
+                // Format data untuk disimpan
+                const userPayload = {
+                    nama: formData.nama,
+                    email: formData.email,
+                    tgl_lahir: formData.tgl_lahir // Format YYYY-MM-DD
+                };
+
+                try {
+                    let apiResult;
+                    
+                    if (isEditing) {
+                        // 1. Edit ke Apps Script
+                        if (apiUrl && !apiUrl.includes("CONTOH_LINK")) {
+                             apiResult = await syncToAppsScript({
+                                action: 'edit',
+                                originalEmail: editingEmail, // Email lama sebagai key
+                                data: userPayload
+                            });
+                            
+                            if (apiResult.status === 'error') throw new Error(apiResult.message);
+                        }
+
+                        // 2. Update Local State
+                        const newUser = {
+                            nama: formData.nama,
+                            email: formData.email,
+                            tgl_lahir: dateInputToDdmmyyyy(formData.tgl_lahir)
+                        };
+                        const updatedUsers = [...users];
+                        updatedUsers[currentUserIndex] = newUser;
+                        setUsers(updatedUsers);
+
+                    } else {
+                        // 1. Add ke Apps Script
+                        if (apiUrl && !apiUrl.includes("CONTOH_LINK")) {
+                            apiResult = await syncToAppsScript({
+                                action: 'add',
+                                data: userPayload
+                            });
+                             
+                            if (apiResult.status === 'error') throw new Error(apiResult.message);
+                        }
+
+                        // 2. Update Local State
+                        const newUser = {
+                            nama: formData.nama,
+                            email: formData.email,
+                            tgl_lahir: dateInputToDdmmyyyy(formData.tgl_lahir)
+                        };
+                        setUsers([...users, newUser]);
+                    }
+
+                    setShowUserModal(false);
+                    // alert("Data berhasil disimpan."); // Opsional, bisa dihapus jika mengganggu
+                } catch (err) {
+                    console.error(err);
+                    alert("Gagal menyimpan ke database: " + err.message);
+                } finally {
+                    setSaving(false);
+                }
+            };
+
+            // --- DOWNLOAD & OTHER EFFECTS ---
             const handleDownload = async () => {
                 const element = document.getElementById('card-capture-area');
                 if (!element) return;
                 
-                // Beri notifikasi loading sederhana
                 const btn = document.getElementById('download-btn');
                 const originalText = btn ? btn.innerHTML : '';
                 if(btn) btn.innerHTML = 'Memproses...';
 
                 try {
-                    // Tunggu sebentar agar gambar terload sempurna jika baru render
                     await new Promise(resolve => setTimeout(resolve, 500));
-
                     const canvas = await html2canvas(element, { 
-                        scale: 2, // Resolusi tinggi
+                        scale: 2, 
                         backgroundColor: null,
                         logging: false,
-                        useCORS: true, // Penting untuk gambar eksternal (logo)
+                        useCORS: true, 
                         onclone: (documentClone) => {
-                            // FIX: html2canvas tidak support text-transparent + bg-clip-text dengan baik
-                            // Solusi: Saat di-clone untuk download, ubah jadi warna solid
                             const textElements = documentClone.querySelectorAll('.text-transparent');
                             textElements.forEach(el => {
                                 el.classList.remove('text-transparent', 'bg-clip-text', 'bg-gradient-to-r');
-                                el.style.color = '#FCD34D'; // Warna Emas Solid
+                                el.style.color = '#FCD34D'; 
                             });
                         }
                     });
@@ -223,13 +414,11 @@
                     document.body.removeChild(link);
                 } catch (err) {
                     alert("Gagal mendownload kartu: " + err.message);
-                    console.error(err);
                 } finally {
                     if(btn) btn.innerHTML = originalText;
                 }
             };
 
-            // --- EFFECTS ---
             useEffect(() => {
                 localStorage.setItem('birthday_apiUrl', apiUrl);
             }, [apiUrl]);
@@ -293,7 +482,6 @@
 
             const fetchFromAppsScript = async (urlToFetch) => {
                 const targetUrl = urlToFetch || apiUrl;
-                // Cek jika link masih default placeholder atau kosong
                 if (!targetUrl || targetUrl.includes("CONTOH_LINK")) {
                     console.log("Link API Apps Script belum diatur.");
                     return;
@@ -303,28 +491,28 @@
                 try {
                     const response = await fetch(targetUrl);
                     if (!response.ok) throw new Error("Network response was not ok");
-                    
-                    // Apps Script API yang kita buat return JSON Array langsung
                     const parsedData = await response.json(); 
 
                     if (!Array.isArray(parsedData) || parsedData.length === 0) {
-                        throw new Error("Data API kosong atau format salah.");
+                        // Jika array kosong tapi sukses, set users ke array kosong
+                        if (Array.isArray(parsedData)) {
+                             setUsers([]);
+                             return;
+                        }
+                        throw new Error("Format data salah.");
                     }
 
                     setUsers(parsedData);
                     checkBirthdays(parsedData); 
                     console.log(`Berhasil memuat ${parsedData.length} data dari API.`);
-                    // Alert sukses dihapus sesuai permintaan
-                    // alert(`Sinkronisasi Berhasil! Ditemukan ${parsedData.length} data jemaat.`);
                 } catch (error) {
                     console.error("Gagal mengambil data:", error);
-                    alert("Gagal sinkronisasi data. Cek console browser untuk detail error CORS atau pastikan Deploy Apps Script sudah 'Anyone'.");
+                    alert("Gagal sinkronisasi data.");
                 } finally {
                     setLoading(false);
                 }
             };
 
-            // Auto fetch on load
             useEffect(() => {
                 if (apiUrl && !apiUrl.includes("CONTOH_LINK")) {
                     fetchFromAppsScript(apiUrl);
@@ -360,6 +548,92 @@
             return (
                 <div className="min-h-screen bg-slate-50 font-sans text-slate-800 relative">
                     
+                    {/* ADD/EDIT USER MODAL */}
+                    {showUserModal && (
+                        <div className="fixed inset-0 z-[70] flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4">
+                            <div className="bg-white rounded-xl shadow-2xl w-full max-w-md p-6 relative">
+                                {!isSaving && (
+                                    <button 
+                                        onClick={() => setShowUserModal(false)}
+                                        className="absolute top-4 right-4 text-slate-400 hover:text-slate-600"
+                                    >
+                                        <X className="w-5 h-5" />
+                                    </button>
+                                )}
+                                
+                                <h2 className="text-xl font-bold text-slate-800 mb-4 border-b pb-2">
+                                    {isEditing ? 'Edit Jemaat' : 'Tambah Jemaat Baru'}
+                                </h2>
+                                
+                                <form onSubmit={handleSaveUser} className="space-y-4">
+                                    <div>
+                                        <label className="block text-sm font-medium text-slate-700 mb-1">Nama Lengkap</label>
+                                        <input 
+                                            type="text" 
+                                            value={formData.nama}
+                                            onChange={(e) => setFormData({...formData, nama: e.target.value})}
+                                            required
+                                            disabled={isSaving}
+                                            className="w-full rounded-lg border-slate-300 focus:border-indigo-500 focus:ring-indigo-500 p-2.5 border disabled:bg-slate-100 disabled:text-slate-500"
+                                            placeholder="Contoh: Budi Santoso"
+                                        />
+                                    </div>
+                                    <div>
+                                        <label className="block text-sm font-medium text-slate-700 mb-1">Email</label>
+                                        <input 
+                                            type="email" 
+                                            value={formData.email}
+                                            onChange={(e) => setFormData({...formData, email: e.target.value})}
+                                            required
+                                            disabled={isSaving}
+                                            className="w-full rounded-lg border-slate-300 focus:border-indigo-500 focus:ring-indigo-500 p-2.5 border disabled:bg-slate-100 disabled:text-slate-500"
+                                            placeholder="budi@example.com"
+                                        />
+                                    </div>
+                                    <div>
+                                        <label className="block text-sm font-medium text-slate-700 mb-1">Tanggal Lahir</label>
+                                        <input 
+                                            type="date" 
+                                            value={formData.tgl_lahir}
+                                            onChange={(e) => setFormData({...formData, tgl_lahir: e.target.value})}
+                                            required
+                                            disabled={isSaving}
+                                            className="w-full rounded-lg border-slate-300 focus:border-indigo-500 focus:ring-indigo-500 p-2.5 border disabled:bg-slate-100 disabled:text-slate-500"
+                                        />
+                                    </div>
+                                    
+                                    <div className="flex gap-3 pt-4">
+                                        <button 
+                                            type="button"
+                                            onClick={() => setShowUserModal(false)}
+                                            disabled={isSaving}
+                                            className="flex-1 bg-white border border-slate-300 text-slate-700 font-medium py-2 rounded-lg hover:bg-slate-50 transition-colors disabled:opacity-50"
+                                        >
+                                            Batal
+                                        </button>
+                                        <button 
+                                            type="submit"
+                                            disabled={isSaving}
+                                            className="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 rounded-lg transition-colors shadow-lg shadow-indigo-200 disabled:opacity-70 flex items-center justify-center gap-2"
+                                        >
+                                            {isSaving ? (
+                                                <>
+                                                    <RefreshCw className="w-4 h-4 spinner" />
+                                                    Menyimpan...
+                                                </>
+                                            ) : (
+                                                <>
+                                                    <Save className="w-4 h-4" />
+                                                    {isEditing ? 'Simpan Perubahan' : 'Tambah Data'}
+                                                </>
+                                            )}
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    )}
+
                     {/* LOGIN MODAL */}
                     {showLoginModal && (
                         <div className="fixed inset-0 z-[60] flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4">
@@ -422,8 +696,17 @@
                     <nav className="bg-indigo-900 text-white shadow-lg sticky top-0 z-50">
                         <div className="max-w-6xl mx-auto px-4">
                             <div className="flex justify-between items-center h-16">
-                                <div className="flex items-center space-x-2">
-                                    <Calendar className="w-6 h-6 text-yellow-400" />
+                                <div className="flex items-center space-x-3">
+                                    {/* Logo Navbar (Ganti Calendar dengan Image Logo) */}
+                                    <img 
+                                        src={logoUrl} 
+                                        alt="Logo BlessingCard" 
+                                        className="w-8 h-8 object-contain"
+                                        onError={(e) => {
+                                            e.target.onerror = null; 
+                                            e.target.src="https://via.placeholder.com/32?text=BC";
+                                        }} 
+                                    />
                                     <div className="flex flex-col">
                                         <span className="font-bold text-lg leading-tight tracking-tight">BlessingCard</span>
                                         <span className="text-[10px] text-indigo-300 uppercase tracking-widest">Abbalove Ministries Bali</span>
@@ -575,16 +858,49 @@
                             </div>
                         )}
 
-                        {/* DATABASE TAB - Protected */}
+                        {/* DATABASE TAB - Protected & UPDATED */}
                         {activeTab === 'database' && isLoggedIn && (
                             <div className="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden">
-                                <div className="p-6 border-b border-slate-100 flex justify-between items-center">
-                                    <h3 className="text-lg font-semibold flex items-center gap-2">
-                                        <Users className="w-5 h-5 text-indigo-600" />
-                                        Data Jemaat
-                                    </h3>
-                                    <span className="text-sm text-slate-500">{users.length} Data Tersimpan</span>
+                                <div className="p-6 border-b border-slate-100 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                                    <div>
+                                        <h3 className="text-lg font-semibold flex items-center gap-2">
+                                            <Users className="w-5 h-5 text-indigo-600" />
+                                            Database Jemaat
+                                        </h3>
+                                        <span className="text-sm text-slate-500">
+                                            {filteredUsers.length} Data {filterMonth !== 'all' ? 'Tefilter' : 'Total'}
+                                        </span>
+                                    </div>
+                                    
+                                    <div className="flex gap-2 w-full md:w-auto">
+                                        {/* Filter Dropdown */}
+                                        <div className="relative">
+                                            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                                <Filter className="h-4 w-4 text-slate-400" />
+                                            </div>
+                                            <select 
+                                                value={filterMonth}
+                                                onChange={(e) => setFilterMonth(e.target.value)}
+                                                className="pl-10 pr-8 py-2 border border-slate-300 rounded-lg text-sm focus:ring-indigo-500 focus:border-indigo-500 bg-slate-50 w-full md:w-48 appearance-none"
+                                            >
+                                                {MONTHS.map(m => (
+                                                    <option key={m.value} value={m.value}>{m.label}</option>
+                                                ))}
+                                            </select>
+                                        </div>
+
+                                        {/* Add Button */}
+                                        <button 
+                                            onClick={handleAddClick}
+                                            disabled={isSaving}
+                                            className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 transition-colors whitespace-nowrap disabled:opacity-50"
+                                        >
+                                            <Plus className="w-4 h-4" />
+                                            Tambah Data
+                                        </button>
+                                    </div>
                                 </div>
+                                
                                 <div className="overflow-x-auto">
                                     <table className="w-full text-left text-sm text-slate-600">
                                         <thead className="bg-slate-50 text-slate-700 font-medium border-b border-slate-200">
@@ -592,22 +908,45 @@
                                                 <th className="px-6 py-4">Nama Lengkap</th>
                                                 <th className="px-6 py-4">Email</th>
                                                 <th className="px-6 py-4">Tanggal Lahir</th>
-                                                <th className="px-6 py-4">Status</th>
+                                                <th className="px-6 py-4 text-center">Aksi</th>
                                             </tr>
                                         </thead>
                                         <tbody className="divide-y divide-slate-100">
-                                            {users.map((user, idx) => (
-                                                <tr key={idx} className="hover:bg-slate-50 transition-colors">
-                                                    <td className="px-6 py-4 font-medium text-slate-900">{user.nama}</td>
-                                                    <td className="px-6 py-4">{user.email}</td>
-                                                    <td className="px-6 py-4 font-mono text-indigo-600">{user.tgl_lahir}</td>
-                                                    <td className="px-6 py-4">
-                                                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                                                            Aktif
-                                                        </span>
+                                            {filteredUsers.length > 0 ? (
+                                                filteredUsers.map((user, idx) => (
+                                                    <tr key={idx} className="hover:bg-slate-50 transition-colors">
+                                                        <td className="px-6 py-4 font-medium text-slate-900">{user.nama}</td>
+                                                        <td className="px-6 py-4">{user.email}</td>
+                                                        <td className="px-6 py-4 font-mono text-indigo-600">{user.tgl_lahir}</td>
+                                                        <td className="px-6 py-4">
+                                                            <div className="flex justify-center gap-2">
+                                                                <button 
+                                                                    onClick={() => handleEditClick(user)}
+                                                                    disabled={isSaving}
+                                                                    className="p-1.5 text-blue-600 hover:bg-blue-50 rounded-md transition-colors disabled:opacity-50"
+                                                                    title="Edit"
+                                                                >
+                                                                    <Edit className="w-4 h-4" />
+                                                                </button>
+                                                                <button 
+                                                                    onClick={() => handleDeleteClick(user)}
+                                                                    disabled={isSaving}
+                                                                    className="p-1.5 text-red-600 hover:bg-red-50 rounded-md transition-colors disabled:opacity-50"
+                                                                    title="Hapus"
+                                                                >
+                                                                    <Trash2 className="w-4 h-4" />
+                                                                </button>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                ))
+                                            ) : (
+                                                <tr>
+                                                    <td colspan="4" className="px-6 py-12 text-center text-slate-400">
+                                                        Tidak ada data yang ditemukan untuk filter ini.
                                                     </td>
                                                 </tr>
-                                            ))}
+                                            )}
                                         </tbody>
                                     </table>
                                 </div>
@@ -696,4 +1035,3 @@
     </script>
 </body>
 </html>
-
