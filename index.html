@@ -106,12 +106,13 @@
                             
                             {/* Header */}
                             <div className="flex flex-col items-center">
-                                <div className="mb-4 bg-white/90 p-3 rounded-full shadow-lg">
+                                {/* Logo Section (Container putih dihapus) */}
+                                <div className="mb-4">
                                     <img 
                                         src={logoUrl || LINK_LOGO_DEFAULT} 
                                         alt="Logo" 
                                         crossOrigin="anonymous" 
-                                        className="h-10 md:h-12 w-auto object-contain"
+                                        className="h-12 md:h-16 w-auto object-contain filter drop-shadow-md"
                                         onError={(e) => { e.target.src = LINK_LOGO_DEFAULT; }}
                                     />
                                 </div>
