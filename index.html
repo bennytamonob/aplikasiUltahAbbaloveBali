@@ -115,10 +115,9 @@
                                         onError={(e) => { e.target.src = LINK_LOGO_DEFAULT; }}
                                     />
                                 </div>
-                                <h3 className="text-[10px] md:text-xs font-extrabold uppercase tracking-[0.2em] text-white/90 mb-1 drop-shadow-sm">
-                                    Abbalove Ministries Bali
+                                <h3 className="text-[10px] md:text-xs font-extrabold uppercase tracking-widest text-white/90 mb-4 drop-shadow-sm px-2">
+                                    Keluarga Besar Abbalove Ministries Bali Mengucapkan
                                 </h3>
-                                <div className="h-0.5 w-12 bg-yellow-400 mb-4 rounded-full"></div>
                                 
                                 <h2 className="font-serif italic text-2xl md:text-3xl text-white drop-shadow-lg leading-none mb-1">
                                     Selamat Ulang Tahun
@@ -184,6 +183,10 @@
             const [currentUserIndex, setCurrentUserIndex] = useState(null);
             const [formData, setFormData] = useState({ nama: '', email: '', tgl_lahir: '' });
             const [combinedCard, setCombinedCard] = useState(null);
+
+            const todayFormatted = useMemo(() => {
+                return new Date().toLocaleDateString('id-ID', { day: '2-digit', month: '2-digit', year: 'numeric' });
+            }, []);
 
             const filteredUsers = useMemo(() => {
                 return users.filter(user => {
@@ -291,16 +294,8 @@
             const handleSaveUser = async (e) => {
                 e.preventDefault();
                 setSaving(true);
-                
-                // --- FIX: Formating Date to DD/MM/YYYY ---
-                // formData.tgl_lahir is YYYY-MM-DD from HTML input
                 const formattedDate = formData.tgl_lahir.split('-').reverse().join('/');
-                
-                const userPayloadForAPI = { 
-                    ...formData, 
-                    tgl_lahir: formattedDate 
-                };
-
+                const userPayloadForAPI = { ...formData, tgl_lahir: formattedDate };
                 try {
                     if (isEditing) {
                         await syncToAppsScript({ action: 'edit', originalEmail: editingEmail, data: userPayloadForAPI });
@@ -406,15 +401,26 @@
                                         
                                         <div className="space-y-6">
                                             <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
-                                                <h4 className="font-bold text-lg mb-4 flex items-center gap-2"><Users className="w-5 h-5 text-indigo-600" /> Hari Ini Berbahagia</h4>
+                                                <h4 className="font-bold text-lg mb-4 flex items-center gap-2">
+                                                    <Users className="w-5 h-5 text-indigo-600" /> Daftar Jamaat Ulang Tahun Hari ini
+                                                </h4>
                                                 <div className="space-y-3">
                                                     {combinedCard.people.map((p, idx) => (
-                                                        <div key={idx} className="flex items-center justify-between bg-slate-50 p-3 rounded-xl">
-                                                            <div>
-                                                                <p className="font-bold text-slate-900">{p.nama}</p>
+                                                        <div key={idx} className="flex items-center justify-between bg-slate-50 p-4 rounded-xl border border-slate-100">
+                                                            <div className="flex-grow">
+                                                                <div className="flex justify-between items-center w-full mb-1">
+                                                                    <p className="font-extrabold text-slate-900">{p.nama}</p>
+                                                                    <span className="text-[10px] font-bold text-indigo-600 bg-indigo-100/50 px-2 py-1 rounded-md border border-indigo-200">
+                                                                        {todayFormatted}
+                                                                    </span>
+                                                                </div>
                                                                 <p className="text-xs text-slate-500">{p.email}</p>
                                                             </div>
-                                                            {isLoggedIn && <button onClick={() => window.open(`mailto:${p.email}?subject=Selamat Ulang Tahun&body=${combinedCard.quote}`)} className="text-xs text-indigo-600 font-bold">Kirim Email</button>}
+                                                            {isLoggedIn && (
+                                                                <button onClick={() => window.open(`mailto:${p.email}?subject=Selamat Ulang Tahun&body=${combinedCard.quote}`)} className="ml-4 text-xs bg-white p-2 rounded-full shadow-sm hover:text-indigo-600 border border-slate-100 transition-all">
+                                                                    <RefreshCw className="w-4 h-4 rotate-45" />
+                                                                </button>
+                                                            )}
                                                         </div>
                                                     ))}
                                                 </div>
@@ -474,7 +480,6 @@
                                                     <td className="px-6 py-4 text-indigo-600 font-mono">{user.tgl_lahir}</td>
                                                     <td className="px-6 py-4 flex justify-center gap-3">
                                                         <button onClick={() => {
-                                                            // Convert DD/MM/YYYY back to YYYY-MM-DD for date input
                                                             const parts = user.tgl_lahir.split('/');
                                                             const dateForInput = parts.length === 3 ? `${parts[2]}-${parts[1]}-${parts[0]}` : '';
                                                             setFormData({nama: user.nama, email: user.email, tgl_lahir: dateForInput});
