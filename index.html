@@ -13,7 +13,7 @@
     <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
     
     <!-- Babel -->
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone@7.23.9/babel.min.js"></script>
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -22,41 +22,47 @@
     <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
     
     <!-- Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,600;0,700;1,600;1,700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&display=swap" rel="stylesheet">
 
     <script>
         tailwind.config = {
             theme: {
                 extend: {
                     fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                        serif: ['Playfair Display', 'serif'],
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'], // Font modern, bersih, elegan
+                        serif: ['"Playfair Display"', 'serif'],     // Font klasik elegan untuk ucapan
                     },
                     colors: {
-                        primary: { // Tema Biru (Navy/Royal Blue)
-                            50: '#eff6ff',
-                            100: '#dbeafe',
-                            500: '#3b82f6',
-                            600: '#2563eb',
-                            700: '#1d4ed8',
-                            800: '#1e40af',
-                            900: '#1e3a8a',
-                            950: '#172554',
+                        primary: { // Deep Slate/Navy untuk kesan Premium & Modern
+                            50: '#f8fafc',
+                            100: '#f1f5f9',
+                            200: '#e2e8f0',
+                            300: '#cbd5e1',
+                            400: '#94a3b8',
+                            500: '#64748b',
+                            600: '#475569',
+                            700: '#334155',
+                            800: '#1e293b',
+                            900: '#0f172a',
+                            950: '#020617',
                         },
-                        accent: { // Tema Merah (Crimson/Ruby)
-                            50: '#fef2f2',
-                            100: '#fee2e2',
-                            400: '#f87171',
-                            500: '#ef4444',
-                            600: '#dc2626',
-                            700: '#b91c1c',
-                            800: '#991b1b',
-                            900: '#7f1d1d',
+                        accent: { // Soft Gold / Champagne untuk aksen elegan
+                            50: '#fdfaf5',
+                            100: '#fbf4e6',
+                            200: '#f5e4c7',
+                            300: '#eed0a0',
+                            400: '#e4b671',
+                            500: '#dca34f',
+                            600: '#c6853a',
+                            700: '#a56533',
+                            800: '#85512f',
+                            900: '#6c4329',
+                            950: '#3d2214',
                         }
                     },
                     animation: {
-                        'fade-in': 'fadeIn 0.5s ease-out',
-                        'slide-up': 'slideUp 0.5s ease-out',
+                        'fade-in': 'fadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1)',
+                        'slide-up': 'slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1)',
                         'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
                     },
                     keyframes: {
@@ -65,9 +71,13 @@
                             '100%': { opacity: '1' },
                         },
                         slideUp: {
-                            '0%': { opacity: '0', transform: 'translateY(20px)' },
+                            '0%': { opacity: '0', transform: 'translateY(24px)' },
                             '100%': { opacity: '1', transform: 'translateY(0)' },
                         }
+                    },
+                    boxShadow: {
+                        'soft': '0 10px 40px -10px rgba(0,0,0,0.08)',
+                        'card': '0 20px 40px -5px rgba(2, 6, 23, 0.2), 0 10px 15px -5px rgba(2, 6, 23, 0.1)',
                     }
                 }
             }
@@ -76,9 +86,12 @@
 
     <style>
         body { 
-            background-color: #f8fafc;
-            background-image: radial-gradient(#e2e8f0 1px, transparent 1px);
-            background-size: 24px 24px;
+            background-color: #fcfcfd;
+            background-image: 
+                radial-gradient(at 0% 0%, hsla(210,100%,98%,1) 0, transparent 50%), 
+                radial-gradient(at 100% 0%, hsla(38,100%,96%,1) 0, transparent 50%);
+            background-attachment: fixed;
+            color: #334155;
         }
         
         .spinner { animation: spin 1s linear infinite; }
@@ -86,39 +99,45 @@
 
         /* Premium Card Effects */
         .card-texture {
-            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+            background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100' height='100' filter='url(%23noise)' opacity='0.08'/%3E%3C/svg%3E");
+            mix-blend-mode: overlay;
         }
         
         .glass-panel {
-            background: rgba(255, 255, 255, 0.85);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.4);
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.8);
         }
 
-        /* Hide scrollbar for clean look */
-        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        /* Custom Scrollbar Elegant */
+        ::-webkit-scrollbar { width: 4px; height: 4px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
         ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        
+        /* Transition utility */
+        .smooth-transition {
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
     </style>
 </head>
-<body class="text-slate-800 antialiased selection:bg-accent-500 selection:text-white">
+<body class="antialiased selection:bg-accent-200 selection:text-primary-900">
 
     <div id="root"></div>
 
-    <script type="text/babel">
+    <script type="text/babel" data-presets="react,env">
         const { useState, useEffect, useMemo } = React;
 
-        // --- KONFIGURASI UTAMA ---
+        // --- KONFIGURASI UTAMA (TIDAK DIUBAH) ---
         const LINK_API_APPS_SCRIPT = "https://script.google.com/macros/s/AKfycbxJsYbC3qlfzSdUJXMfjGTAJ6izeVdU7KPgpznKmGSCFVJfCvwqytewGwKLO1W9O09u/exec"; 
         const LINK_LOGO_DEFAULT = "https://i.ibb.co.com/YFNydDhq/logo.png"; 
-        const FALLBACK_LOGO = "https://ui-avatars.com/api/?name=AM&background=1e3a8a&color=fff";
+        const FALLBACK_LOGO = "https://ui-avatars.com/api/?name=AM&background=0f172a&color=dca34f";
         // -------------------------
 
         // --- ICONS (Lucide Style) ---
         const Icon = ({ path, className = "w-5 h-5", fill = "none" }) => (
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill={fill} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill={fill} stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className={className}>
                 {path}
             </svg>
         );
@@ -147,7 +166,7 @@
             "Tangan Tuhan yang kuat akan selalu menopangmu di usia yang baru ini. Selamat Ulang Tahun!"
         ];
 
-        // --- DATE HELPERS (STRICT DD/MM/YYYY) ---
+        // --- DATE HELPERS (TIDAK DIUBAH) ---
         const parseDateObj = (dateInput) => {
             if (!dateInput) return null;
             
@@ -161,18 +180,14 @@
                         const parts = clean.split(separator);
                         if (parts.length === 3) {
                             if (parts[0].length === 4) { 
-                                // Jika format YYYY/MM/DD
                                 return new Date(parseInt(parts[0], 10), parseInt(parts[1], 10) - 1, parseInt(parts[2], 10));
                             } else { 
-                                // Jika format DD/MM/YYYY (Tanggal/Bulan/Tahun)
                                 return new Date(parseInt(parts[2], 10), parseInt(parts[1], 10) - 1, parseInt(parts[0], 10));
                             }
                         }
                     }
                 }
             }
-            
-            // Fallback untuk tanggal panjang asli dari Javascript
             const d = new Date(dateInput);
             if (!isNaN(d.getTime())) return d;
             return null;
@@ -187,72 +202,74 @@
 
         // --- COMPONENTS ---
 
+        // UI BARU: Kartu yang lebih elegan seperti undangan premium
         const PremiumCardPreview = ({ people, quote, logoUrl }) => {
             const cardDate = new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }).toUpperCase();
 
             return (
-                <div className="w-full md:max-w-md mx-auto group">
-                    <div id="card-capture-area" className="relative overflow-hidden rounded-[2rem] shadow-2xl flex flex-col bg-primary-950 border-[8px] md:border-[12px] border-white z-10 ring-1 ring-slate-200 min-h-[480px]">
+                <div className="w-full md:max-w-md mx-auto group perspective-1000">
+                    <div id="card-capture-area" className="relative overflow-hidden shadow-card flex flex-col bg-primary-950 z-10 min-h-[500px] aspect-[4/5] rounded-none">
                         
-                        {/* Background Design */}
-                        <div className="absolute inset-0 z-0 bg-gradient-to-br from-primary-900 to-primary-950">
-                            <div className="absolute inset-0 opacity-20 card-texture"></div>
-                            {/* Glow effects */}
-                            <div className="absolute -top-20 -right-20 w-64 h-64 bg-accent-600 rounded-full blur-[90px] opacity-30"></div>
-                            <div className="absolute -bottom-20 -left-20 w-64 h-64 bg-primary-500 rounded-full blur-[90px] opacity-30"></div>
+                        {/* Background Design (Elegant Dark) */}
+                        <div className="absolute inset-0 z-0 bg-primary-950">
+                            <div className="absolute inset-0 card-texture"></div>
+                            {/* Subtle Gold Glows */}
+                            <div className="absolute -top-32 -right-32 w-80 h-80 bg-accent-600 rounded-full blur-[100px] opacity-20"></div>
+                            <div className="absolute -bottom-32 -left-32 w-80 h-80 bg-accent-500 rounded-full blur-[100px] opacity-15"></div>
                         </div>
 
+                        {/* Gold Border Outline */}
+                        <div className="absolute inset-3 z-10 border border-accent-500/30"></div>
+                        <div className="absolute inset-4 z-10 border border-accent-500/10"></div>
+
                         {/* Content Container */}
-                        <div className="relative z-10 flex flex-col justify-between h-full w-full p-6 md:p-8">
+                        <div className="relative z-20 flex flex-col justify-between h-full w-full p-8 md:p-10">
                             
                             {/* Header */}
-                            <div className="flex flex-col items-center text-center mt-2">
-                                <div className="mb-4 bg-primary-800 p-2.5 rounded-2xl shadow-xl flex items-center justify-center min-h-[3.5rem] min-w-[3.5rem] border-2 border-primary-500">
+                            <div className="flex flex-col items-center text-center mt-4">
+                                <div className="mb-6 flex items-center justify-center">
                                     <img 
                                         src={logoUrl || LINK_LOGO_DEFAULT} 
                                         alt="Logo" 
                                         crossOrigin="anonymous" 
-                                        className="h-8 w-auto object-contain drop-shadow-sm"
+                                        className="h-10 w-auto object-contain opacity-90 sepia-[.3] hue-rotate-[-10deg] saturate-[1.5]"
                                         onError={(e) => { e.target.onerror = null; e.target.src = FALLBACK_LOGO; }}
                                     />
                                 </div>
-                                <h3 className="text-[9px] md:text-[10px] font-extrabold uppercase tracking-widest text-white mb-1.5 drop-shadow-sm px-2 leading-tight">
-                                    Keluarga Besar Abbalove Ministries Bali Mengucapkan
+                                <h3 className="text-[8px] md:text-[9px] font-semibold uppercase tracking-[0.3em] text-accent-300 mb-2 opacity-80">
+                                    Keluarga Besar Abbalove Ministries Bali
                                 </h3>
-                                <h2 className="font-serif italic text-3xl md:text-4xl text-white mb-2 font-bold tracking-wide drop-shadow-md leading-none">
+                                <h2 className="font-serif italic text-3xl md:text-4xl text-white mb-4 font-medium tracking-wide leading-none">
                                     Selamat Ulang Tahun
                                 </h2>
-                                <div className="w-12 h-1 bg-gradient-to-r from-transparent via-accent-500 to-transparent mb-2 rounded-full"></div>
-                                <p className="text-[10px] md:text-xs font-bold text-accent-400 uppercase tracking-widest">
-                                    Kepada:
+                                <div className="w-10 h-[1px] bg-accent-500/50 mb-3"></div>
+                                <p className="text-[9px] md:text-[10px] text-primary-300 uppercase tracking-widest font-medium">
+                                    Dipersembahkan Kepada:
                                 </p>
                             </div>
 
                             {/* Names Section */}
-                            <div className="flex-grow flex flex-col items-center justify-center py-5 text-center w-full">
-                                <div className="w-full">
+                            <div className="flex-grow flex flex-col items-center justify-center py-6 text-center w-full">
+                                <div className="w-full px-2">
                                     {people.length > 1 ? (
-                                        <div className="inline-block text-left space-y-3 bg-white/10 px-5 py-4 rounded-2xl border border-white/20 backdrop-blur-sm max-w-[100%] md:max-w-[95%]">
+                                        <div className="inline-block text-center space-y-4 max-w-full">
                                             {people.map((p, idx) => (
-                                                <div key={idx} className="text-white flex items-start gap-2.5">
-                                                    <span className="font-bold text-accent-400 text-sm md:text-lg">{idx + 1}.</span>
-                                                    <div className="flex flex-col mt-0.5">
-                                                        <span className="font-bold text-sm md:text-base uppercase tracking-wider leading-none whitespace-normal break-words">{p.nama}</span>
-                                                        {p.area_ibadah && (
-                                                            <span className="text-primary-200 text-[9px] md:text-[10px] uppercase tracking-widest mt-1.5 whitespace-normal break-words">Area: {p.area_ibadah}</span>
-                                                        )}
-                                                    </div>
+                                                <div key={idx} className="flex flex-col items-center justify-center">
+                                                    <span className="font-serif text-lg md:text-xl text-accent-200 capitalize tracking-wide whitespace-normal break-words leading-tight">{p.nama}</span>
+                                                    {p.area_ibadah && (
+                                                        <span className="text-primary-400 text-[9px] md:text-[10px] uppercase tracking-[0.2em] mt-1 whitespace-normal break-words font-medium">Area {p.area_ibadah}</span>
+                                                    )}
                                                 </div>
                                             ))}
                                         </div>
                                     ) : (
                                         people.map((p, idx) => (
-                                            <div key={idx} className="animate-slide-up flex flex-col items-center">
-                                                <h1 className="text-2xl md:text-3xl font-extrabold text-white uppercase tracking-widest drop-shadow-lg leading-tight px-4 whitespace-normal break-words text-center">
+                                            <div key={idx} className="flex flex-col items-center">
+                                                <h1 className="text-2xl md:text-3xl font-serif text-accent-200 capitalize tracking-wide leading-tight whitespace-normal break-words text-center">
                                                     {p.nama}
                                                 </h1>
                                                 {p.area_ibadah && (
-                                                    <p className="text-primary-200 text-[10px] md:text-xs mt-2 uppercase tracking-widest font-medium whitespace-normal break-words text-center">(Area: {p.area_ibadah})</p>
+                                                    <p className="text-primary-400 text-[10px] md:text-[11px] mt-2.5 uppercase tracking-[0.2em] font-medium whitespace-normal break-words text-center">Area {p.area_ibadah}</p>
                                                 )}
                                             </div>
                                         ))
@@ -262,16 +279,16 @@
 
                             {/* Footer / Tanggal, Quote & Berkat */}
                             <div className="flex flex-col items-center text-center mt-2">
-                                <div className="mb-4 px-4 py-1.5 bg-primary-900/60 border border-primary-700/50 rounded-full shadow-inner">
-                                    <p className="text-[9px] md:text-[10px] font-bold text-primary-100 uppercase tracking-widest">
-                                        {cardDate}
-                                    </p>
-                                </div>
-                                <p className="text-[10px] md:text-[11px] text-primary-50 italic font-light leading-relaxed mb-5 px-4 md:px-6 opacity-90 whitespace-normal break-words">
+                                <p className="text-[9px] md:text-[10px] font-medium text-accent-400/80 uppercase tracking-[0.2em] mb-4">
+                                    {cardDate}
+                                </p>
+                                <p className="text-[10px] md:text-[11px] text-primary-200 font-serif italic leading-relaxed mb-6 px-2 opacity-80 whitespace-normal break-words">
                                     "{quote}"
                                 </p>
-                                <div className="bg-gradient-to-r from-accent-600 to-accent-500 text-white px-6 py-2.5 rounded-full text-[9px] md:text-[10px] font-bold uppercase tracking-[0.2em] shadow-lg shadow-accent-600/30 border border-accent-400/50">
+                                <div className="text-[9px] md:text-[10px] text-white font-medium uppercase tracking-[0.3em] opacity-90 flex items-center gap-2">
+                                    <span className="w-4 h-[1px] bg-accent-500/50"></span>
                                     Tuhan Yesus Memberkati
+                                    <span className="w-4 h-[1px] bg-accent-500/50"></span>
                                 </div>
                             </div>
                         </div>
@@ -281,6 +298,7 @@
         };
 
         const App = () => {
+            // STATE TETAP SAMA
             const [activeTab, setActiveTab] = useState('dashboard');
             const [apiUrl, setApiUrl] = useState(() => localStorage.getItem('birthday_apiUrl') || LINK_API_APPS_SCRIPT);
             const [logoUrl, setLogoUrl] = useState(() => localStorage.getItem('birthday_logoUrl') || LINK_LOGO_DEFAULT);
@@ -325,6 +343,7 @@
                 });
             }, [users, filterMonth, searchQuery]);
 
+            // FUNGSI API TETAP SAMA
             const syncToAppsScript = async (payload) => {
                 if (!apiUrl) return { status: 'error', message: 'API tidak diset' };
                 try {
@@ -343,10 +362,7 @@
                     const response = await fetch(targetUrl);
                     const parsedData = await response.json(); 
                     if (Array.isArray(parsedData)) {
-                        // AUTO-MAPPING: Sistem pintar yang membaca data dari Google Sheets
-                        // apa pun nama Header (judul kolom) yang diatur di Google Sheets.
                         const normalizedUsers = parsedData.map(user => {
-                            // Cari kunci (key) yang merepresentasikan data secara cerdas
                             const areaKey = Object.keys(user).find(k => k.toLowerCase().includes('area') || k.toLowerCase().includes('ibadah') || k.toLowerCase() === 'email');
                             const nameKey = Object.keys(user).find(k => k.toLowerCase().includes('nama'));
                             const dateKey = Object.keys(user).find(k => k.toLowerCase().includes('tgl') || k.toLowerCase().includes('tanggal') || k.toLowerCase().includes('lahir'));
@@ -397,7 +413,6 @@
                     const d = parseDateObj(user.tgl_lahir);
                     return d && (d.getMonth() + 1 === currentMonthIndex);
                 });
-                // Urutkan berdasarkan tanggal (1 - 31)
                 return thisMonthUsers.sort((a, b) => {
                     const dateA = parseDateObj(a.tgl_lahir).getDate();
                     const dateB = parseDateObj(b.tgl_lahir).getDate();
@@ -421,7 +436,7 @@
                 btn.innerHTML = '<span class="animate-pulse">Memproses...</span>';
                 try {
                     await new Promise(r => setTimeout(r, 300));
-                    const canvas = await html2canvas(element, { scale: 3, useCORS: true, backgroundColor: null });
+                    const canvas = await html2canvas(element, { scale: 3, useCORS: true, backgroundColor: '#020617' });
                     const link = document.createElement('a');
                     link.download = `BlessingCard-${Date.now()}.png`;
                     link.href = canvas.toDataURL('image/png');
@@ -439,7 +454,7 @@
                 btn.innerHTML = '<span class="animate-pulse">Memproses...</span>';
                 try {
                     await new Promise(r => setTimeout(r, 300));
-                    const canvas = await html2canvas(element, { scale: 3, useCORS: true, backgroundColor: null });
+                    const canvas = await html2canvas(element, { scale: 3, useCORS: true, backgroundColor: '#020617' });
                     const link = document.createElement('a');
                     link.download = `Ulang-Tahun-Bulan-${currentMonthName.split(' ')[0]}-${Date.now()}.png`;
                     link.href = canvas.toDataURL('image/png');
@@ -480,24 +495,19 @@
                     formattedDate = `${dateParts[2]}/${dateParts[1]}/${dateParts[0]}`; 
                 }
 
-                // Kirim semua variasi key agar diterima mulus oleh Apps Script backend
                 const payloadData = { 
                     nama: formData.nama, 
                     area_ibadah: formData.area_ibadah, 
                     tgl_lahir: formattedDate,
-                    
-                    // Fallback Keys: Memastikan script menangkap data ini apapun headernya
                     'Area Ibadah': formData.area_ibadah,
                     'Tanggal Lahir': formattedDate,
                     'Nama': formData.nama,
-                    email: formData.area_ibadah // Disisipkan jika Apps Script lama masih mewajibkan key "email"
+                    email: formData.area_ibadah 
                 };
 
                 try {
                     if (isEditing) {
-                        // OriginalEmail disertakan karena Apps Script lama mungkin masih menjadikan email sebagai patokan pencarian baris
                         await syncToAppsScript({ action: 'edit', originalNama: originalNama, originalEmail: originalNama, data: payloadData });
-                        
                         const updated = users.map(u => u.nama === originalNama ? payloadData : u);
                         setUsers(updated);
                     } else {
@@ -544,66 +554,62 @@
             const NavButton = ({ id, label, icon: IconCmp }) => (
                 <button 
                     onClick={() => setActiveTab(id)} 
-                    className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all duration-300 ${activeTab === id ? 'bg-primary-600 text-white shadow-md' : 'text-slate-600 hover:bg-primary-50 hover:text-primary-700'}`}
+                    className={`flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-semibold smooth-transition ${activeTab === id ? 'bg-primary-900 text-white shadow-md' : 'text-primary-600 hover:bg-primary-50 hover:text-primary-900'}`}
                 >
                     <IconCmp c="w-4 h-4" /> <span className="hidden sm:inline">{label}</span>
                 </button>
             );
 
             return (
-                <div className="min-h-screen pb-20 flex flex-col font-sans">
+                <div className="min-h-screen pb-20 flex flex-col">
                     
-                    {/* Floating Navbar */}
-                    <nav className="sticky top-4 z-40 mx-4 md:mx-auto max-w-5xl glass-panel rounded-2xl shadow-sm border border-slate-200/60 px-4 py-3 flex justify-between items-center mb-8 animate-fade-in">
-                        <div className="flex items-center gap-3">
-                            <div className="bg-primary-700 p-1.5 rounded-xl border border-primary-600 shadow-sm">
-                                <img src={logoUrl || LINK_LOGO_DEFAULT} className="w-8 h-8 object-contain" onError={e => { e.target.onerror = null; e.target.src = FALLBACK_LOGO; }}/>
+                    {/* UI BARU: Floating Navbar (Glass & Minimalist) */}
+                    <nav className="sticky top-6 z-40 mx-4 md:mx-auto max-w-5xl glass-panel rounded-full shadow-soft px-3 py-3 flex justify-between items-center mb-10 animate-fade-in">
+                        <div className="flex items-center gap-3 pl-2 md:pl-4">
+                            <div className="bg-primary-900 p-2 rounded-full border border-primary-800 shadow-sm">
+                                <img src={logoUrl || LINK_LOGO_DEFAULT} className="w-5 h-5 md:w-6 md:h-6 object-contain sepia-[.3] hue-rotate-[-10deg] saturate-[1.5]" onError={e => { e.target.onerror = null; e.target.src = FALLBACK_LOGO; }}/>
                             </div>
-                            <div className="flex flex-col">
-                                <span className="font-bold text-primary-900 leading-tight">BlessingCard</span>
-                            </div>
+                            <span className="font-bold text-primary-900 tracking-tight hidden md:block">BlessingCard</span>
                         </div>
-                        <div className="flex items-center gap-1 md:gap-2">
+                        <div className="flex items-center gap-1 md:gap-2 pr-1">
                             <NavButton id="dashboard" label="Beranda" icon={Gift} />
                             {isLoggedIn && (
                                 <>
-                                    <NavButton id="database" label="Database" icon={Users} />
+                                    <NavButton id="database" label="Data" icon={Users} />
                                     <NavButton id="settings" label="Pengaturan" icon={Settings} />
-                                    <div className="w-px h-6 bg-slate-200 mx-1"></div>
-                                    <button onClick={() => setIsLoggedIn(false)} className="p-2.5 text-accent-600 hover:bg-accent-50 rounded-xl transition-colors" title="Keluar">
+                                    <div className="w-px h-6 bg-primary-200 mx-2"></div>
+                                    <button onClick={() => setIsLoggedIn(false)} className="p-2.5 text-primary-400 hover:bg-red-50 hover:text-red-600 rounded-full smooth-transition" title="Keluar">
                                         <LogOut c="w-5 h-5" />
                                     </button>
                                 </>
                             )}
                             {!isLoggedIn && (
-                                <button onClick={() => setShowLoginModal(true)} className="ml-2 px-5 py-2.5 bg-accent-600 hover:bg-accent-700 text-white rounded-xl text-sm font-semibold transition-all shadow-md hover:shadow-lg">
-                                    Admin Login
+                                <button onClick={() => setShowLoginModal(true)} className="ml-2 px-6 py-2.5 bg-primary-900 hover:bg-primary-950 text-white rounded-full text-sm font-semibold smooth-transition shadow-md hover:shadow-lg">
+                                    Login Admin
                                 </button>
                             )}
                         </div>
                     </nav>
 
-                    {/* MODALS */}
+                    {/* UI BARU: MODALS yang lebih bersih */}
                     {showLoginModal && (
-                        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-primary-950/50 backdrop-blur-sm animate-fade-in">
-                            <div className="bg-white rounded-3xl shadow-2xl w-full max-w-sm p-8 relative animate-slide-up border border-slate-100">
-                                <button onClick={() => setShowLoginModal(false)} className="absolute top-4 right-4 p-2 text-slate-400 hover:bg-slate-100 rounded-full transition-colors"><X c="w-5 h-5"/></button>
+                        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-primary-900/40 backdrop-blur-sm animate-fade-in">
+                            <div className="bg-white rounded-[2rem] shadow-card w-full max-w-sm p-8 md:p-10 relative animate-slide-up">
+                                <button onClick={() => setShowLoginModal(false)} className="absolute top-6 right-6 p-2 text-primary-300 hover:bg-primary-50 rounded-full smooth-transition"><X c="w-5 h-5"/></button>
                                 <div className="text-center mb-8">
-                                    <div className="w-16 h-16 bg-primary-50 rounded-full flex items-center justify-center mx-auto mb-4 text-primary-600">
-                                        <LogOut c="w-8 h-8" />
-                                    </div>
-                                    <h2 className="text-2xl font-bold text-primary-900">Admin Akses</h2>
+                                    <h2 className="text-2xl font-bold text-primary-900 tracking-tight">Akses Admin</h2>
+                                    <p className="text-primary-500 text-sm mt-2">Masuk untuk mengelola data jemaat.</p>
                                 </div>
                                 <form onSubmit={handleLogin} className="space-y-4">
                                     <div>
-                                        <input type="text" value={username} onChange={e => setUsername(e.target.value)} placeholder="Username" className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary-500 focus:outline-none transition-all" required />
+                                        <input type="text" value={username} onChange={e => setUsername(e.target.value)} placeholder="Username" className="w-full px-5 py-3.5 bg-primary-50/50 border border-primary-100 rounded-xl focus:border-accent-500 focus:ring-4 focus:ring-accent-500/10 focus:outline-none smooth-transition text-primary-900 font-medium placeholder:text-primary-300" required />
                                     </div>
                                     <div>
-                                        <input type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="Password" className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary-500 focus:outline-none transition-all" required />
+                                        <input type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="Password" className="w-full px-5 py-3.5 bg-primary-50/50 border border-primary-100 rounded-xl focus:border-accent-500 focus:ring-4 focus:ring-accent-500/10 focus:outline-none smooth-transition text-primary-900 font-medium placeholder:text-primary-300" required />
                                     </div>
-                                    {loginError && <p className="text-accent-600 text-sm text-center font-medium">{loginError}</p>}
-                                    <button type="submit" disabled={isLoginLoading} className="w-full bg-primary-600 hover:bg-primary-700 text-white py-3 rounded-xl font-bold transition-all shadow-md mt-2">
-                                        {isLoginLoading ? 'Memeriksa...' : 'Masuk'}
+                                    {loginError && <p className="text-red-500 text-sm text-center font-medium bg-red-50 py-2 rounded-lg">{loginError}</p>}
+                                    <button type="submit" disabled={isLoginLoading} className="w-full bg-primary-900 hover:bg-primary-950 text-white py-4 rounded-xl font-semibold smooth-transition shadow-md mt-6">
+                                        {isLoginLoading ? 'Memeriksa...' : 'Masuk ke Dashboard'}
                                     </button>
                                 </form>
                             </div>
@@ -611,26 +617,26 @@
                     )}
 
                     {showUserModal && (
-                        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-primary-950/50 backdrop-blur-sm animate-fade-in">
-                            <div className="bg-white rounded-3xl shadow-2xl w-full max-w-md p-8 relative animate-slide-up">
-                                <button onClick={() => setShowUserModal(false)} className="absolute top-4 right-4 p-2 text-slate-400 hover:bg-slate-100 rounded-full transition-colors"><X c="w-5 h-5"/></button>
-                                <h2 className="text-2xl font-bold text-primary-900 mb-6 flex items-center gap-2">
-                                    {isEditing ? <><Edit c="w-6 h-6 text-primary-600"/> Edit Data</> : <><Plus c="w-6 h-6 text-primary-600"/> Tambah Data</>}
+                        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-primary-900/40 backdrop-blur-sm animate-fade-in">
+                            <div className="bg-white rounded-[2rem] shadow-card w-full max-w-md p-8 md:p-10 relative animate-slide-up">
+                                <button onClick={() => setShowUserModal(false)} className="absolute top-6 right-6 p-2 text-primary-300 hover:bg-primary-50 rounded-full smooth-transition"><X c="w-5 h-5"/></button>
+                                <h2 className="text-2xl font-bold text-primary-900 mb-8 tracking-tight">
+                                    {isEditing ? 'Edit Data Jemaat' : 'Tambah Jemaat Baru'}
                                 </h2>
                                 <form onSubmit={handleSaveUser} className="space-y-5">
                                     <div>
-                                        <label className="block text-sm font-semibold text-slate-600 mb-1">Nama Lengkap</label>
-                                        <input type="text" value={formData.nama} onChange={e => setFormData({...formData, nama: e.target.value})} className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary-500 focus:outline-none" required />
+                                        <label className="block text-xs font-bold text-primary-500 uppercase tracking-wide mb-2 ml-1">Nama Lengkap</label>
+                                        <input type="text" value={formData.nama} onChange={e => setFormData({...formData, nama: e.target.value})} className="w-full px-5 py-3.5 bg-primary-50/50 border border-primary-100 rounded-xl focus:border-accent-500 focus:ring-4 focus:ring-accent-500/10 focus:outline-none smooth-transition text-primary-900 font-medium" required />
                                     </div>
                                     <div>
-                                        <label className="block text-sm font-semibold text-slate-600 mb-1">Area Ibadah</label>
-                                        <input type="text" value={formData.area_ibadah} onChange={e => setFormData({...formData, area_ibadah: e.target.value})} placeholder="Contoh: Pusat, Selatan, Utara" className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary-500 focus:outline-none" required />
+                                        <label className="block text-xs font-bold text-primary-500 uppercase tracking-wide mb-2 ml-1">Area Ibadah</label>
+                                        <input type="text" value={formData.area_ibadah} onChange={e => setFormData({...formData, area_ibadah: e.target.value})} placeholder="Contoh: Pusat, Selatan" className="w-full px-5 py-3.5 bg-primary-50/50 border border-primary-100 rounded-xl focus:border-accent-500 focus:ring-4 focus:ring-accent-500/10 focus:outline-none smooth-transition text-primary-900 font-medium" required />
                                     </div>
                                     <div>
-                                        <label className="block text-sm font-semibold text-slate-600 mb-1">Tanggal Lahir</label>
-                                        <input type="date" value={formData.tgl_lahir} onChange={e => setFormData({...formData, tgl_lahir: e.target.value})} className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary-500 focus:outline-none" required />
+                                        <label className="block text-xs font-bold text-primary-500 uppercase tracking-wide mb-2 ml-1">Tanggal Lahir</label>
+                                        <input type="date" value={formData.tgl_lahir} onChange={e => setFormData({...formData, tgl_lahir: e.target.value})} className="w-full px-5 py-3.5 bg-primary-50/50 border border-primary-100 rounded-xl focus:border-accent-500 focus:ring-4 focus:ring-accent-500/10 focus:outline-none smooth-transition text-primary-900 font-medium" required />
                                     </div>
-                                    <button type="submit" disabled={isSaving} className="w-full bg-primary-600 hover:bg-primary-700 text-white py-3.5 rounded-xl font-bold transition-all shadow-md mt-4">
+                                    <button type="submit" disabled={isSaving} className="w-full bg-primary-900 hover:bg-primary-950 text-white py-4 rounded-xl font-semibold smooth-transition shadow-md mt-8">
                                         {isSaving ? 'Menyimpan...' : 'Simpan Data'}
                                     </button>
                                 </form>
@@ -642,60 +648,61 @@
                     <main className="max-w-5xl mx-auto px-4 w-full flex-grow">
                         
                         {activeTab === 'dashboard' && (
-                            <div className="space-y-6 animate-fade-in">
+                            <div className="space-y-8 animate-fade-in">
                                 
-                                {/* Status Banner */}
-                                <div className="bg-white p-6 rounded-3xl shadow-sm border border-slate-200 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+                                {/* Status Header - Clean & Minimalist */}
+                                <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 pb-4 border-b border-primary-200/50">
                                     <div>
-                                        <h1 className="text-2xl font-bold text-primary-900 mb-1">Shalom! Hari yang indah.</h1>
-                                        <p className="text-slate-500 text-sm md:text-base font-medium">
+                                        <h1 className="text-3xl font-bold text-primary-900 tracking-tight">Shalom!</h1>
+                                        <p className="text-primary-500 font-medium mt-1">
                                             {loading ? (
-                                                <span className="flex items-center gap-2"><RefreshCw c="w-4 h-4 spinner text-primary-600"/> Sinkronisasi data...</span>
+                                                <span className="flex items-center gap-2"><RefreshCw c="w-4 h-4 spinner text-accent-500"/> Memuat data dari server...</span>
                                             ) : (
                                                 combinedCard ? `Terdapat ${combinedCard.people.length} jemaat yang berulang tahun hari ini.` : 'Tidak ada jemaat yang berulang tahun hari ini.'
                                             )}
                                         </p>
                                     </div>
-                                    <div className="bg-primary-50 text-primary-700 px-4 py-2 rounded-xl font-semibold flex items-center gap-2 text-sm border border-primary-100 shadow-sm">
-                                        <Calendar c="w-4 h-4" /> {todayFormatted}
+                                    <div className="bg-white text-primary-700 px-5 py-2.5 rounded-full font-semibold flex items-center gap-2.5 text-sm shadow-sm border border-primary-100">
+                                        <Calendar c="w-4 h-4 text-accent-500" /> {todayFormatted}
                                     </div>
                                 </div>
 
                                 {combinedCard && !loading && (
-                                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+                                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start mt-8">
                                         
                                         {/* Left: Card Preview */}
-                                        <div className="lg:col-span-5 flex justify-center lg:sticky lg:top-24">
+                                        <div className="lg:col-span-5 flex justify-center lg:sticky lg:top-32">
                                             <PremiumCardPreview people={combinedCard.people} quote={combinedCard.quote} logoUrl={logoUrl} />
                                         </div>
                                         
                                         {/* Right: Actions & List */}
-                                        <div className="lg:col-span-7 space-y-6">
-                                            {/* Download Action */}
-                                            <div className="bg-gradient-to-br from-primary-800 to-primary-950 p-8 rounded-3xl text-white shadow-xl relative overflow-hidden group border border-primary-700">
-                                                <div className="absolute top-0 right-0 -mt-10 -mr-10 w-40 h-40 bg-accent-500 opacity-20 rounded-full blur-3xl group-hover:scale-150 transition-transform duration-700"></div>
-                                                <h3 className="text-2xl font-bold mb-2">Sebarkan Berkat</h3>
-                                                <p className="text-primary-100 mb-6 font-medium text-sm">Unduh kartu ucapan yang telah digenerasi secara otomatis ini untuk dibagikan ke WhatsApp atau media sosial.</p>
-                                                <button id="download-btn" onClick={handleDownload} className="w-full bg-accent-600 text-white hover:bg-accent-700 font-bold py-4 rounded-2xl flex items-center justify-center gap-2 transition-all shadow-lg active:scale-[0.98]">
+                                        <div className="lg:col-span-7 space-y-8">
+                                            
+                                            {/* Download Action - Elegant Design */}
+                                            <div className="bg-primary-900 p-8 md:p-10 rounded-[2rem] text-white shadow-card relative overflow-hidden group">
+                                                <div className="absolute top-0 right-0 -mt-10 -mr-10 w-48 h-48 bg-accent-500 opacity-10 rounded-full blur-3xl group-hover:scale-150 smooth-transition duration-700"></div>
+                                                <h3 className="text-2xl font-serif text-accent-200 mb-3 tracking-wide">Sebarkan Berkat</h3>
+                                                <p className="text-primary-300 mb-8 font-medium leading-relaxed">Unduh kartu ucapan premium ini dan bagikan sukacita kepada mereka yang berulang tahun hari ini.</p>
+                                                <button id="download-btn" onClick={handleDownload} className="w-full bg-accent-500 text-primary-950 hover:bg-accent-400 font-bold py-4 rounded-xl flex items-center justify-center gap-2 smooth-transition shadow-[0_10px_20px_-10px_rgba(220,163,79,0.5)] hover:-translate-y-0.5">
                                                     <Download c="w-5 h-5" /> Unduh Kartu Ucapan
                                                 </button>
                                             </div>
 
-                                            {/* List List */}
-                                            <div className="bg-white p-6 rounded-3xl shadow-sm border border-slate-200">
-                                                <h4 className="font-bold text-lg text-primary-900 mb-4 flex items-center gap-2">
-                                                    <Gift c="w-5 h-5 text-accent-500" /> Daftar Ulang Tahun
+                                            {/* List Jemaat - Clean lines */}
+                                            <div>
+                                                <h4 className="font-bold text-sm text-primary-400 uppercase tracking-widest mb-4 flex items-center gap-2 px-2">
+                                                    <Gift c="w-4 h-4" /> Daftar Ulang Tahun Hari Ini
                                                 </h4>
                                                 <div className="space-y-3">
                                                     {combinedCard.people.map((p, idx) => (
-                                                        <div key={idx} className="flex items-center gap-4 bg-slate-50 p-4 rounded-2xl border border-slate-100 hover:border-primary-100 hover:shadow-md transition-all">
-                                                            <div className="w-12 h-12 rounded-full bg-primary-100 text-primary-700 flex items-center justify-center font-bold text-lg flex-shrink-0">
+                                                        <div key={idx} className="flex items-center gap-5 bg-white p-4 md:p-5 rounded-2xl border border-primary-100 shadow-sm hover:shadow-md smooth-transition hover:border-accent-200">
+                                                            <div className="w-12 h-12 rounded-full bg-primary-50 text-accent-600 flex items-center justify-center font-serif font-bold text-xl flex-shrink-0 border border-primary-100">
                                                                 {p.nama.charAt(0).toUpperCase()}
                                                             </div>
                                                             <div>
-                                                                <p className="font-bold text-slate-800 text-lg">{p.nama}</p>
-                                                                <p className="text-sm text-slate-500 mt-0.5">
-                                                                    Area: <span className="font-semibold text-slate-600">{p.area_ibadah || '-'}</span>
+                                                                <p className="font-bold text-primary-900 text-lg tracking-tight">{p.nama}</p>
+                                                                <p className="text-sm text-primary-500 mt-0.5">
+                                                                    Area: <span className="font-semibold text-primary-700">{p.area_ibadah || '-'}</span>
                                                                 </p>
                                                             </div>
                                                         </div>
@@ -707,69 +714,72 @@
                                 )}
 
                                 {!combinedCard && !loading && (
-                                    <div className="text-center py-24 bg-white rounded-3xl border border-slate-200 shadow-sm flex flex-col items-center justify-center">
-                                        <div className="w-20 h-20 bg-primary-50 rounded-full flex items-center justify-center mb-4">
-                                            <Calendar c="w-10 h-10 text-primary-300" />
+                                    <div className="text-center py-32 flex flex-col items-center justify-center">
+                                        <div className="w-20 h-20 bg-primary-50 rounded-full flex items-center justify-center mb-6 shadow-sm border border-primary-100">
+                                            <Calendar c="w-8 h-8 text-primary-300" />
                                         </div>
-                                        <h3 className="text-xl font-bold text-primary-900 mb-2">Belum Ada Ulang Tahun</h3>
-                                        <p className="text-slate-500 font-medium">Berdasarkan database, tidak ada jemaat yang berulang tahun hari ini.</p>
+                                        <h3 className="text-2xl font-bold text-primary-900 mb-2 tracking-tight">Tidak Ada Ulang Tahun</h3>
+                                        <p className="text-primary-500 font-medium">Belum ada jadwal perayaan ulang tahun jemaat untuk hari ini.</p>
                                     </div>
                                 )}
 
-                                {/* --- POSTER ULANG TAHUN BULANAN --- */}
-                                <div className="mt-12 pt-10 border-t-2 border-slate-200 border-dashed animate-fade-in">
-                                    <div className="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
+                                {/* --- POSTER ULANG TAHUN BULANAN (ELEGANT) --- */}
+                                <div className="mt-16 pt-16 border-t border-primary-200/60 animate-fade-in pb-10">
+                                    <div className="flex flex-col md:flex-row justify-between items-center mb-10 gap-6">
                                         <div className="text-center md:text-left">
-                                            <h2 className="text-2xl font-bold text-primary-900">Ulang Tahun Bulan {currentMonthName.split(' ')[0]}</h2>
-                                            <p className="text-slate-500 font-medium mt-1">Daftar jemaat yang berulang tahun di bulan ini.</p>
+                                            <h2 className="text-3xl font-bold text-primary-900 tracking-tight">Daftar Bulan {currentMonthName.split(' ')[0]}</h2>
+                                            <p className="text-primary-500 font-medium mt-2">Seluruh jemaat yang berulang tahun di bulan ini.</p>
                                         </div>
                                         {monthlyBirthdays.length > 0 && (
-                                            <button id="download-monthly-btn" onClick={handleDownloadMonthly} className="bg-primary-600 text-white hover:bg-primary-700 font-bold py-3 px-6 rounded-xl flex items-center gap-2 transition-all shadow-md active:scale-[0.98] w-full md:w-auto justify-center">
-                                                <Download c="w-5 h-5" /> Unduh Poster Bulanan
+                                            <button id="download-monthly-btn" onClick={handleDownloadMonthly} className="bg-white border border-primary-200 text-primary-800 hover:text-primary-900 hover:border-primary-300 font-semibold py-3 px-6 rounded-xl flex items-center gap-2 smooth-transition shadow-sm w-full md:w-auto justify-center hover:bg-primary-50">
+                                                <Download c="w-5 h-5" /> Unduh Rekap Bulanan
                                             </button>
                                         )}
                                     </div>
 
                                     {monthlyBirthdays.length > 0 ? (
-                                        <div className="w-full mx-auto group pb-8">
-                                            <div id="monthly-capture-area" className="relative overflow-hidden rounded-[2rem] shadow-2xl flex flex-col bg-primary-950 border-[8px] md:border-[12px] border-white z-10 ring-1 ring-slate-200 p-6 md:p-10 min-h-[480px]">
+                                        <div className="w-full mx-auto group">
+                                            <div id="monthly-capture-area" className="relative overflow-hidden flex flex-col bg-primary-950 shadow-card z-10 p-10 md:p-14 min-h-[500px] rounded-none">
                                                 
                                                 {/* Background Design */}
-                                                <div className="absolute inset-0 z-0 bg-gradient-to-br from-primary-900 to-primary-950">
-                                                    <div className="absolute inset-0 opacity-20 card-texture"></div>
-                                                    <div className="absolute -top-20 -right-20 w-64 h-64 bg-accent-600 rounded-full blur-[100px] opacity-20"></div>
-                                                    <div className="absolute -bottom-20 -left-20 w-64 h-64 bg-primary-500 rounded-full blur-[100px] opacity-20"></div>
+                                                <div className="absolute inset-0 z-0 bg-primary-950">
+                                                    <div className="absolute inset-0 card-texture opacity-50"></div>
+                                                    <div className="absolute top-0 right-0 w-96 h-96 bg-accent-600 rounded-full blur-[120px] opacity-10"></div>
+                                                    <div className="absolute bottom-0 left-0 w-96 h-96 bg-accent-500 rounded-full blur-[120px] opacity-10"></div>
                                                 </div>
 
-                                                <div className="relative z-10 w-full flex flex-col items-center">
+                                                {/* Gold Border */}
+                                                <div className="absolute inset-4 z-10 border border-accent-500/20"></div>
+
+                                                <div className="relative z-20 w-full flex flex-col items-center">
                                                     {/* Header */}
-                                                    <div className="flex flex-col items-center text-center mb-8">
-                                                        <div className="mb-4 bg-primary-800 p-2.5 rounded-2xl shadow-xl flex items-center justify-center min-h-[3.5rem] min-w-[3.5rem] border-2 border-primary-500">
-                                                            <img src={logoUrl || LINK_LOGO_DEFAULT} alt="Logo" crossOrigin="anonymous" className="h-8 w-auto object-contain drop-shadow-sm" onError={(e) => { e.target.onerror = null; e.target.src = FALLBACK_LOGO; }} />
+                                                    <div className="flex flex-col items-center text-center mb-12">
+                                                        <div className="mb-6 flex items-center justify-center">
+                                                            <img src={logoUrl || LINK_LOGO_DEFAULT} alt="Logo" crossOrigin="anonymous" className="h-10 w-auto object-contain opacity-90 sepia-[.3] hue-rotate-[-10deg] saturate-[1.5]" onError={(e) => { e.target.onerror = null; e.target.src = FALLBACK_LOGO; }} />
                                                         </div>
-                                                        <h3 className="text-[9px] md:text-[10px] font-extrabold uppercase tracking-widest text-white mb-1 drop-shadow-sm px-2">
-                                                            Daftar Jemaat
+                                                        <h3 className="text-[8px] md:text-[9px] font-semibold uppercase tracking-[0.3em] text-accent-300 mb-2 opacity-80">
+                                                            Keluarga Besar Abbalove
                                                         </h3>
-                                                        <h2 className="font-serif italic text-3xl md:text-4xl text-white mb-2 font-bold tracking-wide drop-shadow-md">
+                                                        <h2 className="font-serif italic text-3xl md:text-5xl text-white mb-4 font-medium tracking-wide">
                                                             Ulang Tahun Bulan {currentMonthName.split(' ')[0]}
                                                         </h2>
-                                                        <div className="w-16 h-1 bg-gradient-to-r from-transparent via-accent-500 to-transparent mb-2 rounded-full"></div>
+                                                        <div className="w-12 h-[1px] bg-accent-500/50"></div>
                                                     </div>
 
-                                                    {/* List Grid - 1 kolom mobile, 2 tablet, 3 desktop */}
-                                                    <div className="w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4 mb-10">
+                                                    {/* List Grid - Clean Minimalist */}
+                                                    <div className="w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-y-6 gap-x-10 mb-12">
                                                         {monthlyBirthdays.map((p, idx) => {
                                                             const d = parseDateObj(p.tgl_lahir);
                                                             const day = d ? String(d.getDate()).padStart(2, '0') : '-';
                                                             return (
-                                                                <div key={idx} className="bg-white/10 border border-white/20 p-3 rounded-xl flex items-center gap-3">
-                                                                    <div className="bg-gradient-to-br from-accent-500 to-accent-600 text-white font-black w-12 h-12 rounded-lg flex items-center justify-center flex-shrink-0 text-xl shadow-md border border-accent-400/50">
-                                                                        <span className="leading-none block mt-0.5">{day}</span>
+                                                                <div key={idx} className="flex items-center gap-4 pb-4 border-b border-primary-800/50">
+                                                                    <div className="text-accent-400 font-serif font-bold text-3xl flex-shrink-0 w-10 text-center opacity-90">
+                                                                        {day}
                                                                     </div>
-                                                                    <div className="flex flex-col flex-1 min-w-0">
-                                                                        <span className="text-white font-bold text-[13px] md:text-sm uppercase leading-snug mb-0.5 whitespace-normal break-words">{p.nama}</span>
+                                                                    <div className="flex flex-col flex-1 min-w-0 pt-1">
+                                                                        <span className="text-white font-medium text-sm uppercase tracking-wide leading-tight mb-1 whitespace-normal break-words">{p.nama}</span>
                                                                         {p.area_ibadah && (
-                                                                            <span className="text-white text-[9px] md:text-[10px] uppercase tracking-widest whitespace-normal break-words">Area: {p.area_ibadah}</span>
+                                                                            <span className="text-primary-400 text-[10px] uppercase tracking-widest whitespace-normal break-words font-medium">Area {p.area_ibadah}</span>
                                                                         )}
                                                                     </div>
                                                                 </div>
@@ -777,15 +787,15 @@
                                                         })}
                                                     </div>
 
-                                                    <div className="bg-gradient-to-r from-accent-600 to-accent-500 text-white px-6 py-2.5 rounded-full text-[10px] font-bold uppercase tracking-[0.2em] shadow-lg border border-accent-400/50">
+                                                    <div className="text-[9px] md:text-[10px] text-white font-medium uppercase tracking-[0.3em] opacity-80 flex items-center gap-2 mt-auto">
                                                         Tuhan Yesus Memberkati
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
                                     ) : (
-                                        <div className="text-center py-12 bg-white rounded-3xl border border-slate-200 shadow-sm">
-                                            <p className="text-slate-500 font-medium">Tidak ada jemaat yang berulang tahun di bulan ini berdasarkan database.</p>
+                                        <div className="text-center py-20 bg-white rounded-3xl border border-primary-100 shadow-sm">
+                                            <p className="text-primary-500 font-medium">Tidak ada data jemaat yang berulang tahun di bulan ini.</p>
                                         </div>
                                     )}
                                 </div>
@@ -793,62 +803,62 @@
                         )}
 
                         {activeTab === 'database' && isLoggedIn && (
-                            <div className="bg-white rounded-3xl shadow-sm border border-slate-200 overflow-hidden animate-fade-in flex flex-col min-h-[60vh]">
+                            <div className="bg-white rounded-[2rem] shadow-soft border border-primary-100 overflow-hidden animate-fade-in flex flex-col min-h-[60vh]">
                                 {/* Toolbar */}
-                                <div className="p-6 border-b border-slate-100 bg-slate-50/50 flex flex-col md:flex-row gap-4 justify-between items-center">
-                                    <div className="flex items-center gap-3">
-                                        <div className="p-2 bg-primary-100 rounded-lg text-primary-700"><Users c="w-5 h-5"/></div>
-                                        <h3 className="text-lg font-bold text-slate-800">Total Data: {filteredUsers.length}</h3>
+                                <div className="p-6 md:p-8 border-b border-primary-100 flex flex-col lg:flex-row gap-6 justify-between items-start lg:items-center">
+                                    <div>
+                                        <h3 className="text-2xl font-bold text-primary-900 tracking-tight">Data Jemaat</h3>
+                                        <p className="text-primary-500 text-sm mt-1">Total {filteredUsers.length} data tersimpan</p>
                                     </div>
-                                    <div className="flex flex-wrap gap-3 w-full md:w-auto">
-                                        <div className="relative flex-grow md:flex-grow-0">
-                                            <Search c="absolute left-3 top-3 w-4 h-4 text-slate-400" />
-                                            <input type="text" value={searchQuery} onChange={e => setSearchQuery(e.target.value)} placeholder="Cari nama/area..." className="pl-10 pr-4 py-2.5 bg-white border border-slate-200 rounded-xl text-sm w-full md:w-56 focus:ring-2 focus:ring-primary-500 focus:outline-none" />
+                                    <div className="flex flex-wrap gap-3 w-full lg:w-auto">
+                                        <div className="relative flex-grow lg:flex-grow-0">
+                                            <Search c="absolute left-4 top-3.5 w-4 h-4 text-primary-400" />
+                                            <input type="text" value={searchQuery} onChange={e => setSearchQuery(e.target.value)} placeholder="Cari nama/area..." className="pl-11 pr-4 py-3 bg-primary-50/50 border border-primary-200 rounded-xl text-sm w-full lg:w-64 focus:ring-4 focus:ring-primary-500/10 focus:border-primary-400 focus:outline-none smooth-transition text-primary-900 font-medium" />
                                         </div>
-                                        <select value={filterMonth} onChange={e => setFilterMonth(e.target.value)} className="px-4 py-2.5 bg-white border border-slate-200 rounded-xl text-sm font-medium focus:ring-2 focus:ring-primary-500 focus:outline-none text-slate-700 cursor-pointer">
+                                        <select value={filterMonth} onChange={e => setFilterMonth(e.target.value)} className="px-5 py-3 bg-primary-50/50 border border-primary-200 rounded-xl text-sm font-medium focus:ring-4 focus:ring-primary-500/10 focus:border-primary-400 focus:outline-none text-primary-800 cursor-pointer smooth-transition">
                                             <option value="all">Semua Bulan</option>
                                             {[...Array(12)].map((_, i) => <option key={i+1} value={i+1}>{new Date(0, i).toLocaleString('id-ID', {month: 'long'})}</option>)}
                                         </select>
-                                        <button onClick={() => { setFormData({nama:'', area_ibadah:'', tgl_lahir:''}); setIsEditing(false); setShowUserModal(true); }} className="bg-primary-600 hover:bg-primary-700 text-white px-5 py-2.5 rounded-xl font-semibold flex items-center gap-2 transition-colors shadow-sm">
-                                            <Plus c="w-4 h-4"/> Tambah
+                                        <button onClick={() => { setFormData({nama:'', area_ibadah:'', tgl_lahir:''}); setIsEditing(false); setShowUserModal(true); }} className="bg-primary-900 hover:bg-primary-950 text-white px-6 py-3 rounded-xl font-semibold flex items-center gap-2 smooth-transition shadow-md hover:shadow-lg">
+                                            <Plus c="w-4 h-4"/> Tambah Data
                                         </button>
                                     </div>
                                 </div>
                                 
-                                {/* Table */}
+                                {/* Table Elegant */}
                                 <div className="overflow-x-auto flex-grow">
                                     <table className="w-full text-sm text-left">
-                                        <thead className="text-xs text-slate-500 uppercase bg-white border-b border-slate-100">
+                                        <thead className="text-[11px] text-primary-400 uppercase tracking-wider bg-white border-b border-primary-100 font-bold">
                                             <tr>
-                                                <th className="px-6 py-4 font-semibold">Nama Lengkap</th>
-                                                <th className="px-6 py-4 font-semibold">Area Ibadah</th>
-                                                <th className="px-6 py-4 font-semibold">Tgl Lahir</th>
-                                                <th className="px-6 py-4 font-semibold text-center">Aksi</th>
+                                                <th className="px-8 py-5">Nama Lengkap</th>
+                                                <th className="px-8 py-5">Area Ibadah</th>
+                                                <th className="px-8 py-5">Tanggal Lahir</th>
+                                                <th className="px-8 py-5 text-right">Aksi</th>
                                             </tr>
                                         </thead>
-                                        <tbody className="divide-y divide-slate-50">
+                                        <tbody className="divide-y divide-primary-50">
                                             {filteredUsers.length === 0 ? (
                                                 <tr>
-                                                    <td colSpan="4" className="px-6 py-10 text-center text-slate-500">
-                                                        Data tidak ditemukan.
+                                                    <td colSpan="4" className="px-8 py-16 text-center text-primary-400 font-medium">
+                                                        Data tidak ditemukan dalam database.
                                                     </td>
                                                 </tr>
                                             ) : (
                                                 filteredUsers.map((user, idx) => (
-                                                    <tr key={idx} className="hover:bg-slate-50/80 transition-colors group">
-                                                        <td className="px-6 py-4 font-bold text-slate-800">{user.nama}</td>
-                                                        <td className="px-6 py-4">
-                                                            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-slate-100 text-slate-600 font-medium text-xs border border-slate-200">
-                                                                Area: {user.area_ibadah || '-'}
+                                                    <tr key={idx} className="hover:bg-primary-50/50 smooth-transition group">
+                                                        <td className="px-8 py-5 font-bold text-primary-900 tracking-tight">{user.nama}</td>
+                                                        <td className="px-8 py-5">
+                                                            <span className="inline-flex items-center text-primary-600 font-medium text-sm">
+                                                                {user.area_ibadah || '-'}
                                                             </span>
                                                         </td>
-                                                        <td className="px-6 py-4 text-primary-600 font-medium tracking-wide">{formatToNumericDate(user.tgl_lahir)}</td>
-                                                        <td className="px-6 py-4">
-                                                            <div className="flex justify-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                                                                <button onClick={() => openEditModal(user)} className="p-2 text-primary-600 bg-primary-50 hover:bg-primary-100 rounded-lg transition-colors" title="Edit">
+                                                        <td className="px-8 py-5 text-primary-500 font-medium">{formatToNumericDate(user.tgl_lahir)}</td>
+                                                        <td className="px-8 py-5">
+                                                            <div className="flex justify-end gap-2 opacity-0 group-hover:opacity-100 smooth-transition">
+                                                                <button onClick={() => openEditModal(user)} className="p-2.5 text-primary-500 bg-white border border-primary-200 hover:text-primary-900 hover:border-primary-400 rounded-lg smooth-transition shadow-sm" title="Edit">
                                                                     <Edit c="w-4 h-4"/>
                                                                 </button>
-                                                                <button onClick={() => handleDeleteUser(user)} className="p-2 text-accent-600 bg-accent-50 hover:bg-accent-100 rounded-lg transition-colors" title="Hapus">
+                                                                <button onClick={() => handleDeleteUser(user)} className="p-2.5 text-red-500 bg-white border border-primary-200 hover:text-red-700 hover:border-red-300 hover:bg-red-50 rounded-lg smooth-transition shadow-sm" title="Hapus">
                                                                     <Trash2 c="w-4 h-4"/>
                                                                 </button>
                                                             </div>
@@ -863,33 +873,35 @@
                         )}
 
                         {activeTab === 'settings' && isLoggedIn && (
-                            <div className="max-w-2xl mx-auto space-y-6 animate-fade-in">
-                                <div className="bg-white p-8 rounded-3xl shadow-sm border border-slate-200">
-                                    <div className="flex items-center gap-3 mb-6 pb-4 border-b border-slate-100">
-                                        <Settings c="w-6 h-6 text-primary-600" />
-                                        <h3 className="text-xl font-bold text-slate-800">Pengaturan Sistem</h3>
+                            <div className="max-w-2xl mx-auto animate-fade-in">
+                                <div className="bg-white p-8 md:p-10 rounded-[2rem] shadow-soft border border-primary-100">
+                                    <div className="flex items-center gap-3 mb-8 pb-5 border-b border-primary-100">
+                                        <div className="p-2 bg-primary-50 rounded-lg text-primary-800">
+                                            <Settings c="w-6 h-6" />
+                                        </div>
+                                        <h3 className="text-2xl font-bold text-primary-900 tracking-tight">Pengaturan Sistem</h3>
                                     </div>
                                     
-                                    <div className="space-y-6">
+                                    <div className="space-y-8">
                                         <div>
-                                            <label className="block text-sm font-semibold text-slate-700 mb-2">Link Google Apps Script (API)</label>
-                                            <input type="text" value={apiUrl} onChange={e => {setApiUrl(e.target.value); localStorage.setItem('birthday_apiUrl', e.target.value);}} className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-primary-500 focus:outline-none" />
-                                            <p className="mt-2 text-xs text-slate-500">URL Web App dari Google Apps Script untuk menghubungkan aplikasi dengan Google Sheets.</p>
+                                            <label className="block text-xs font-bold text-primary-500 uppercase tracking-wide mb-2 ml-1">Link Google Apps Script (API)</label>
+                                            <input type="text" value={apiUrl} onChange={e => {setApiUrl(e.target.value); localStorage.setItem('birthday_apiUrl', e.target.value);}} className="w-full px-5 py-3.5 bg-primary-50/50 border border-primary-200 rounded-xl text-sm focus:ring-4 focus:ring-primary-500/10 focus:border-primary-400 focus:outline-none smooth-transition text-primary-800 font-medium" />
+                                            <p className="mt-2 text-xs text-primary-400 font-medium">URL Web App dari Google Apps Script untuk menghubungkan aplikasi dengan Google Sheets.</p>
                                         </div>
                                         
                                         <div>
-                                            <label className="block text-sm font-semibold text-slate-700 mb-2">Logo Gereja (URL Gambar)</label>
+                                            <label className="block text-xs font-bold text-primary-500 uppercase tracking-wide mb-2 ml-1">Logo Gereja (URL Gambar)</label>
                                             <div className="flex gap-4 items-start">
-                                                <input type="text" value={logoUrl} onChange={e => {setLogoUrl(e.target.value); localStorage.setItem('birthday_logoUrl', e.target.value);}} className="flex-grow px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-primary-500 focus:outline-none" />
-                                                <div className="w-16 h-16 bg-primary-800 rounded-xl border border-primary-600 flex items-center justify-center flex-shrink-0 p-2 shadow-sm">
-                                                    <img src={logoUrl || LINK_LOGO_DEFAULT} className="max-h-full object-contain" onError={e => { e.target.onerror = null; e.target.src = FALLBACK_LOGO; }} />
+                                                <input type="text" value={logoUrl} onChange={e => {setLogoUrl(e.target.value); localStorage.setItem('birthday_logoUrl', e.target.value);}} className="flex-grow px-5 py-3.5 bg-primary-50/50 border border-primary-200 rounded-xl text-sm focus:ring-4 focus:ring-primary-500/10 focus:border-primary-400 focus:outline-none smooth-transition text-primary-800 font-medium" />
+                                                <div className="w-16 h-16 bg-primary-950 rounded-xl border border-primary-800 flex items-center justify-center flex-shrink-0 p-2 shadow-inner">
+                                                    <img src={logoUrl || LINK_LOGO_DEFAULT} className="max-h-full object-contain sepia-[.3] hue-rotate-[-10deg] saturate-[1.5]" onError={e => { e.target.onerror = null; e.target.src = FALLBACK_LOGO; }} />
                                                 </div>
                                             </div>
                                         </div>
 
-                                        <div className="pt-4">
-                                            <button onClick={() => fetchFromAppsScript()} className="w-full bg-slate-100 hover:bg-slate-200 text-slate-700 py-3 rounded-xl font-bold flex items-center justify-center gap-2 transition-colors">
-                                                <RefreshCw c={`w-5 h-5 ${loading ? 'spinner text-primary-600' : ''}`}/> Sinkronkan Ulang Database
+                                        <div className="pt-6 border-t border-primary-100">
+                                            <button onClick={() => fetchFromAppsScript()} className="w-full bg-white border border-primary-200 hover:border-primary-400 hover:bg-primary-50 text-primary-800 py-4 rounded-xl font-bold flex items-center justify-center gap-2 smooth-transition shadow-sm">
+                                                <RefreshCw c={`w-5 h-5 ${loading ? 'spinner text-accent-500' : ''}`}/> Sinkronkan Ulang Database
                                             </button>
                                         </div>
                                     </div>
